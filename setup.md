@@ -30,6 +30,8 @@ You must be on the DUNE Collaboration member list and have a valid FNAL or CERN 
 
 You should join the DUNE Slack instance and look in #computing-training-basics for help with this tutorial
 
+go to https://atwork.dunescience.org/tools/ scroll down to Slack and request an invite.  Please do not do this if you are already in DUNE Slack.
+
 
 > ## Note
 > The instructions below are for FNAL accounts. If you do not have a valid FNAL account but a CERN one, go at the bottom of this page to the "Setup on CERN machines".
@@ -290,7 +292,7 @@ Setting up DUNE UPS area... /cvmfs/dune.opensciencegrid.org/products/dune/
 Try testing ROOT to make certain things are working
 
 ~~~
-setup root -v v6_28_12 -q e26:p3915:prof # sets up root for you  
+setup root v6_28_12 -q e26:p3915:prof # sets up root for you  
 
 #  right now setup seems to spew out 1000's of lines of verbose output just doing its job. 
 
