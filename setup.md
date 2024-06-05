@@ -418,7 +418,10 @@ Your certificate is valid until: Wed Jan 27 18:03:55 2021
 ~~~
 {: .output}
 
-To access the grid resources, you will need a proxy. More information on proxy is available [ here][proxy-info].
+To access the grid resources, you will need either need a proxy or a token. More information on proxy is available [here][proxy-info].
+
+### Proxy method <a name="proxy"></a>
+
 This is to be done once every 24 hours per login machine you’re using to identify yourself:
 
 ~~~
@@ -440,6 +443,55 @@ Report this by appending the output of `voms-proxy-info` to your first login fil
 voms-proxy-info >> /exp/dune/app/users/${USER}/my_first_login.txt
 ~~~
 {: .language-bash}
+
+
+### Tokens method <a name="tokens"></a>
+
+We are moving from proxies to tokens - these are a bit different.  
+
+#### 1. Get your token
+
+~~~
+ htgettoken -i dune --vaultserver htvaultprod.fnal.gov
+~~~
+{: .language-bash}
+
+the first time you do this, it will ask you to open a web browser and 
+
+~~~
+Attempting OIDC authentication with https://htvaultprod.fnal.gov:8200
+
+Complete the authentication at:
+    https://cilogon.org/device/?user_code=ABC-D1E-FGH
+No web open command defined, please copy/paste the above to any web browser
+Waiting for response in web browser
+~~~
+{: .output}
+
+You do want to follow the instructions and copy and paste the link into your browser (can be any browser). There is a time limit on it so its best to do it right away. Always choose Fermilab as the identity provider in the menu, even if your home institution is listed. After you hit log on, you'll get a message saying you approved the access request, and then after a short delay (may be several seconds) in the terminal you will see.
+
+~~~
+Saving credkey to /nashome/u/username/.config/htgettoken/credkey-dune-default
+Saving refresh token ... done
+Attempting to get token from https://htvaultprod.fnal.gov:8200 ... succeeded
+Storing bearer token in /tmp/bt_token_dune_Analysis_somenumber.othernumber
+Storing condor credentials for dune
+~~~
+{: .output}
+
+you only have to do the web thing once/month.
+
+### 2. Tell the system where your token is
+
+
+~~~
+export BEARER_TOKEN_FILE=/run/user/`id -u`/bt_u`id -u`
+~~~
+{: .language-bash}
+
+the `id -u` just returns your numerical user ID 
+
+
 
 > ## Issues
 > If you have issues here, please ask #computing-training-basics in Slack to get support. Please mention in your message it is the Step 6 of the setup. Thanks!
