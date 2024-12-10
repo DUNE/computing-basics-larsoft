@@ -103,9 +103,9 @@ First get metacat if you have not already done so
 ~~~
 setup metacat # if using SL7
 spack load metacat # if using Alma9
-metacat auth login -m password $USER  # use your services password to authenticate
 export METACAT_AUTH_SERVER_URL=https://metacat.fnal.gov:8143/auth/dune
 export METACAT_SERVER_URL=https://metacat.fnal.gov:9443/dune_meta_prod/app
+metacat auth login -m password $USER  # use your services password to authenticate
 # pro tip that will set up metacat and rucio in spack along with all the environment variables above
 spack load r-m-dd-config experiment=dune
 ~~~
