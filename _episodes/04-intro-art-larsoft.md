@@ -13,15 +13,18 @@ keypoints:
 - LArSoft is a set of simulation and reconstruction tools shared among the liquid-argon TPC collaborations.
 ---
 
-<!--
 #### Session Video
 
-The session will be captured on video a placed here after the workshop for asynchronous study.
+The session video on December 10, 2025 was captured for your asynchronous review. 
 
+<center>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/u_HnXTxUs9Y" title="DUNE Computing Tutorial Dec 2024 Data Management" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</center>
+
+<!--
 #### Live Notes
 
 Participants are encouraged to monitor and utilize the [Livedoc for May. 2023](https://docs.google.com/document/d/19XMQqQ0YV2AtR5OdJJkXoDkuRLWv30BnHY9C5N92uYs/edit?usp=sharing) to ask questions and learn.  For reference, the [Livedoc from Jan. 2023](https://docs.google.com/document/d/1sgRQPQn1OCMEUHAk28bTPhZoySdT5NUSDnW07aL-iQU/edit?usp=sharing) is provided.
-
 -->
 
 <!--
