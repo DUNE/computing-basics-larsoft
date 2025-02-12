@@ -72,7 +72,7 @@ mkdir -p /pnfs/dune/scratch/users/${USER}/may2023tutorial
 Having done that, let us submit a prepared script:
 
 ~~~
-jobsub_submit -G dune --mail_always -N 1 --memory=1000MB --disk=1GB --cpu=1 --expected-lifetime=1h  --singularity-image /cvmfs/singularity.opensciencegrid.org/fermilab/fnal-wn-sl7:latest --append_condor_requirements='(TARGET.HAS_Singularity==true&&TARGET.HAS_CVMFS_dune_opensciencegrid_org==true&&TARGET.HAS_CVMFS_larsoft_opensciencegrid_org==true&&TARGET.CVMFS_dune_opensciencegrid_org_REVISION>=1105)' -e GFAL_PLUGIN_DIR=/usr/lib64/gfal2-plugins -e GFAL_CONFIG_DIR=/etc/gfal2.d file:///dune/app/users/kherner/submission_test_singularity.sh
+jobsub_submit -G dune --mail_always -N 1 --memory=1000MB --disk=1GB --cpu=1 --expected-lifetime=1h  --singularity-image /cvmfs/singularity.opensciencegrid.org/fermilab/fnal-wn-sl7:latest --append_condor_requirements='(TARGET.HAS_Singularity==true&&TARGET.HAS_CVMFS_dune_opensciencegrid_org==true&&TARGET.HAS_CVMFS_larsoft_opensciencegrid_org==true&&TARGET.CVMFS_dune_opensciencegrid_org_REVISION>=1105)' -e GFAL_PLUGIN_DIR=/usr/lib64/gfal2-plugins -e GFAL_CONFIG_DIR=/etc/gfal2.d file:///exp/dune/app/users/kherner/submission_test_singularity.sh
 ~~~
 
 If all goes well you should see something like this:
@@ -180,11 +180,11 @@ There are many ways of doing this but by far the best is to use the Rapid Code D
 If you have finished up the LArSoft follow-up and want to use your own code for this next attempt, feel free to tar it up (you don't need anything besides the localProducts* and work directories) and use your own tar ball in lieu of the one in this example.
 You will have to change the last line with your own submit file instead of the pre-made one.
 
-First, we should make a tarball. Here is what we can do (assuming you are starting from /dune/app/users/username/):
+First, we should make a tarball. Here is what we can do (assuming you are starting from /exp/dune/app/users/username/):
 
 ```bash
-cp /dune/app/users/kherner/setupmay2023tutorial-grid.sh /dune/app/users/${USER}/
-cp /dune/app/users/kherner/may2023tutorial/localProducts_larsoft_v09_72_01_e20_prof/setup-grid /dune/app/users/${USER}/may2023tutorial/localProducts_larsoft_v09_72_01_e20_prof/setup-grid
+cp /exp/dune/app/users/kherner/setupmay2023tutorial-grid.sh /exp/dune/app/users/${USER}/
+cp /exp/dune/app/users/kherner/may2023tutorial/localProducts_larsoft_v09_72_01_e20_prof/setup-grid /exp/dune/app/users/${USER}/may2023tutorial/localProducts_larsoft_v09_72_01_e20_prof/setup-grid
 ```
 
 Before we continue, let's examine these files a bit. We will source the first one in our job script, and it will set up the environment for us.
@@ -210,17 +210,17 @@ mrbslp
 
 
 Now let's look at the difference between the setup-grid script and the plain setup script.
-Assuming you are currently in the /dune/app/users/username directory:
+Assuming you are currently in the /exp/dune/app/users/username directory:
 
 ```bash
 diff may2023tutorial/localProducts_larsoft_v09_72_01_e20_prof/setup may2023tutorial/localProducts_larsoft_v09_72_01_e20_prof/setup-grid
 ```
 
 ~~~
-< setenv MRB_TOP "/dune/app/users/<username>/may2023tutorial"
-< setenv MRB_TOP_BUILD "/dune/app/users/<username>/may2023tutorial"
-< setenv MRB_SOURCE "/dune/app/users/<username>/may2023tutorial/srcs"
-< setenv MRB_INSTALL "/dune/app/users/<username>/may2023tutorial/localProducts_larsoft_v09_72_01_e20_prof"
+< setenv MRB_TOP "/exp/dune/app/users/<username>/may2023tutorial"
+< setenv MRB_TOP_BUILD "/exp/dune/app/users/<username>/may2023tutorial"
+< setenv MRB_SOURCE "/exp/dune/app/users/<username>/may2023tutorial/srcs"
+< setenv MRB_INSTALL "/exp/dune/app/users/<username>/may2023tutorial/localProducts_larsoft_v09_72_01_e20_prof"
 ---
 > setenv MRB_TOP "${INPUT_TAR_DIR_LOCAL}/may2023tutorial"
 > setenv MRB_TOP_BUILD "${INPUT_TAR_DIR_LOCAL}/may2023tutorial"
@@ -229,7 +229,7 @@ diff may2023tutorial/localProducts_larsoft_v09_72_01_e20_prof/setup may2023tutor
 ~~~
 
 As you can see, we have switched from the hard-coded directories to directories defined by environment variables; the `INPUT_TAR_DIR_LOCAL` variable will be set for us (see below).
-Now, let's actually create our tar file. Again assuming you are in `/dune/app/users/kherner/may2023tutorial/`:
+Now, let's actually create our tar file. Again assuming you are in `/exp/dune/app/users/kherner/may2023tutorial/`:
 ```bash
 tar --exclude '.git' -czf may2023tutorial.tar.gz may2023tutorial/localProducts_larsoft_v09_72_01_e20_prof may2023tutorial/work setupmay2023tutorial-grid.sh
 ```
@@ -238,7 +238,7 @@ Note how we have excluded the contents of ".git" directories in the various pack
 Then submit another job (in the following we keep the same submit file as above):
 
 ```bash
-jobsub_submit -G dune --mail_always -N 1 --memory=2500MB --disk=2GB --expected-lifetime=3h --cpu=1 --tar_file_name=dropbox:///dune/app/users/<username>/may2023tutorial.tar.gz --singularity-image /cvmfs/singularity.opensciencegrid.org/fermilab/fnal-wn-sl7:latest --append_condor_requirements='(TARGET.HAS_Singularity==true&&TARGET.HAS_CVMFS_dune_opensciencegrid_org==true&&TARGET.HAS_CVMFS_larsoft_opensciencegrid_org==true&&TARGET.CVMFS_dune_opensciencegrid_org_REVISION>=1105&&TARGET.HAS_CVMFS_fifeuser1_opensciencegrid_org==true&&TARGET.HAS_CVMFS_fifeuser2_opensciencegrid_org==true&&TARGET.HAS_CVMFS_fifeuser3_opensciencegrid_org==true&&TARGET.HAS_CVMFS_fifeuser4_opensciencegrid_org==true)' -e GFAL_PLUGIN_DIR=/usr/lib64/gfal2-plugins -e GFAL_CONFIG_DIR=/etc/gfal2.d file:///dune/app/users/kherner/run_may2023tutorial.sh
+jobsub_submit -G dune --mail_always -N 1 --memory=2500MB --disk=2GB --expected-lifetime=3h --cpu=1 --tar_file_name=dropbox:///exp/dune/app/users/<username>/may2023tutorial.tar.gz --singularity-image /cvmfs/singularity.opensciencegrid.org/fermilab/fnal-wn-sl7:latest --append_condor_requirements='(TARGET.HAS_Singularity==true&&TARGET.HAS_CVMFS_dune_opensciencegrid_org==true&&TARGET.HAS_CVMFS_larsoft_opensciencegrid_org==true&&TARGET.CVMFS_dune_opensciencegrid_org_REVISION>=1105&&TARGET.HAS_CVMFS_fifeuser1_opensciencegrid_org==true&&TARGET.HAS_CVMFS_fifeuser2_opensciencegrid_org==true&&TARGET.HAS_CVMFS_fifeuser3_opensciencegrid_org==true&&TARGET.HAS_CVMFS_fifeuser4_opensciencegrid_org==true)' -e GFAL_PLUGIN_DIR=/usr/lib64/gfal2-plugins -e GFAL_CONFIG_DIR=/etc/gfal2.d file:///exp/dune/app/users/kherner/run_may2023tutorial.sh
 ```
 
 You'll see this is very similar to the previous case, but there are some new options: 
