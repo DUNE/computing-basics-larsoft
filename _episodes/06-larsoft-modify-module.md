@@ -469,6 +469,19 @@ to the example `TTree`.
 
 #### Run your program in the debugger
 
+##### gdb and ddd
+
+As of January 2025, the Fermilab license for forge_tools ddt and map has expired and will not be renewed.  To debug programs, we now have access to command-line gdb and ddd.  Instructions for how to use both of these are available on the web.  The version of gdb that comes with SL7 is quite old.  gdb gets set up with dunesw however so you get a version that can debug programs compiled with modern versions of gcc and clang.  The gui debugger ddd is also installed both in the AL9 suite on the dunegpvms, as well as in the defualt SL7 container.  ddd uses gdb under the hood, but it provides convenience features for displaying data and setting breakpoints in the source window. There is an issue with assigning a pseudo-terminal in a SL7 container session that is fixed with a preloaded shared library.
+
+~~~
+  source /etc/profile.d/ddd.sh
+~~~
+{: .language-bash}
+defines an alias for ddd that sets LD_PRELOAD before running the debugger gui.  Some of the advice in using the forge_tools debugger below is expected to be useful in running ddd and gdb at the command line, such as the need to find the appropriate version of the source, and stepping to find bugs.
+
+
+##### Old forge_tools ddt instructions
+
 [YouTube Lecture Part 4](https://youtu.be/xcgVKmpKgfw): In session #3 (the running session)
 
 ~~~
