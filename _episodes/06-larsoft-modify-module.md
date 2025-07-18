@@ -147,13 +147,15 @@ has been forwarded.
 ## Session 2
 
 Start up session #2 by logging in to one of the build nodes,
-`dunebuild01.fnal.gov` or `dunebuild02.fnal.gov`.  They have 16 cores
+`dunebuild02.fnal.gov` or `dunebuild03.fnal.gov`.  They have at least 16 cores
 apiece and the dunegpvm's have only four, so builds run much faster
 on them.  If all tutorial users log on to the same one and try
 building all at once, the build nodes may become very slow or run
 out of memory.  The `lxplus` nodes are generally big enough to build
 sufficiently quickly.  The Fermilab build nodes should not be used
 to run programs (people need them to build code!)
+
+Note -- interactive computers at Fermilab will print out how much RAM, swap, and CPU threads the node has when you log in. In general, builds that launch more processes than a machine has threads will not run any faster, but it will use more memory.  So the command "mrb i -j16" above is intended to be run on a build node with at least 16 threads and enough memory to support 16 simultaneous invocations of the C++ compiler, which may take up to 2 GB per invocation.
 
 > ## Note you need a modified container on the build machines and at CERN as they don't mount /pnfs
 > This is done to prevent people from running interactive jobs on the dedicated build machines. 
