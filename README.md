@@ -1,6 +1,10 @@
 
-DUNE Computing Training 2024 Update
+DUNE Computing Training for LArSoft
 ========================================
+
+LArSoft is a software framework that provides tools for simulating, reconstruction, and analysis of data captured in liquid argon time projection chambers.
+
+These training materials are a work in progress and are being developed for tutorials offered in 2025. 
 
 This repository holds the source code of the webpage that is rendered [here]({{ site.baseurl }}/index.html). 
 
@@ -48,6 +52,10 @@ Maintainers of this GitHub space are:
 * Heidi Schellman
 
 ## Authors
+
+Lead Authors:
+
+* Tom Junk
 
 A list of contributors to the lesson can be found in [AUTHORS](AUTHORS)
 
