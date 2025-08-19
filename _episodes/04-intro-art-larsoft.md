@@ -1,5 +1,5 @@
 ---
-title: Introduction to art and LArSoft (2024 - Apptainer version)
+title: Introduction to art and LArSoft (2025 - Apptainer version)
 teaching: 50
 exercises: 0
 questions:
@@ -15,7 +15,7 @@ keypoints:
 
 #### Session Video
 
-The session video on December 10, 2025 was captured for your asynchronous review. 
+The session video on December 10, 2024 was captured for your asynchronous review. 
 
 <center>
 <iframe width="560" height="315" src="https://www.youtube.com/embed/u_HnXTxUs9Y" title="DUNE Computing Tutorial Dec 2024 Data Management" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -59,7 +59,7 @@ The *art* wiki page is here: [https://cdcvs.fnal.gov/redmine/projects/art/wiki][
 3. Input file interface -- allows ganging together input files
 4. Schedules module execution
 5. Defines a standard way to store data products in *art*-formatted ROOT files
-6. Defines a format for associations between data products (for example, tracks have hits, and associations between  tracks and hits can be made via art's association mechanism.
+6. Defines a format for associations between data products (for example, tracks have hits, and associations between  tracks and hits can be made via art's association mechanism).
 7. Provides a uniform job configuration interface
 8. Stores job configuration information in *art*-formatted root files.
 9. Output file control -- lets you define output filenames based on parts of the input filename.
@@ -71,10 +71,10 @@ The configuration storage is particularly useful if you receive a data file from
 
 ### Getting set up to try the tools
 
-Log in to a `dunegpvm*.fnal.gov` machine and set up your environment (This script is defined in Exercise 5 of https://dune.github.io/computing-training-basics/setup.html)
+Log in to a `dunegpvm*.fnal.gov` or `lxplus.cern.ch` machine and set up your environment (This script is defined in Exercise 5 of https://dune.github.io/computing-basics/setup.html)
 
 > ## Note
-> For now do this in the Apptainer.  Due to the need to set up the container separately on the build nodes and the gpvms due to /pnfs mounts being different, and the need to keep your environment clean for use on other experiments, it is best to define aliases in your .profile or .bashrc or other login script you use to define aliases.  A set of convenient aliases is
+> For now do this in the Apptainer.  Due to the need to set up the container separately at CERN, on the build nodes, and  on the gpvms due to /pnfs mounts being different, and the need to keep your environment clean for use on other experiments, it is best to define aliases in your .profile or .bashrc or other login script you use to define aliases.  A set of convenient aliases is
 {: .challenge}
 
 ~~~
@@ -82,11 +82,15 @@ alias dunesl7="/cvmfs/oasis.opensciencegrid.org/mis/apptainer/current/bin/apptai
 
 alias dunesl7build="/cvmfs/oasis.opensciencegrid.org/mis/apptainer/current/bin/apptainer shell --shell=/bin/bash -B /cvmfs,/exp,/build,/nashome,/opt,/run/user,/etc/hostname,/etc/hosts,/etc/krb5.conf --ipc --pid /cvmfs/singularity.opensciencegrid.org/fermilab/fnal-dev-sl7:latest"
 
+alias dunesl7CERN="/cvmfs/oasis.opensciencegrid.org/mis/apptainer/current/bin/apptainer shell --shell=/bin/bash \
+-B /cvmfs,/afs,/opt,/run/user,/etc/hostname --ipc --pid \
+/cvmfs/singularity.opensciencegrid.org/fermilab/fnal-dev-sl7:latest"
+
 alias dunesetups="source /cvmfs/dune.opensciencegrid.org/products/dune/setup_dune.sh"
 ~~~
 {: .language-bash}
 
-Then you can use the appropriate alias to start the SL7 container on either the build node or the gpvms.  Starting a container gives you a very bare environment -- it does not source your .profile for you; you have to do that yourself.  The examples below assume you put the aliases above in your .profile or in a script sourced by your .profile.  I always set the prompt variable PS1 in my profile so I can tell that I've sourced it.
+Then you can use the appropriate alias to start the SL7 container on either the build node or the gpvms or lxplus. Starting a container gives you a very bare environment -- it does not source your .profile for you; you have to do that yourself.  The examples below assume you put the aliases above in your .profile or in a script sourced by your .profile.  I always set the prompt variable PS1 in my profile so I can tell that I've sourced it.
 
 ~~~
 PS1="<`hostname`> "; export PS1
@@ -99,7 +103,7 @@ dunesl7
 source .profile
 dunesetups
 
-export DUNELAR_VERSION=v10_00_04d00
+export DUNELAR_VERSION=v10_07_00d00
 export DUNELAR_QUALIFIER=e26:prof
 setup dunesw $DUNELAR_VERSION -q $DUNELAR_QUALIFIER
 
@@ -109,9 +113,11 @@ setup_fnal_security
 
 ~~~
 # define a sample file
-export SAMPLE_FILE=root://fndcadoor.fnal.gov:1094/pnfs/fnal.gov/usr/dune/tape_backed/dunepro/physics/full-reconstructed/2023/mc/out1/MC_Winter2023_RITM1592444_reReco/54/05/35/65/NNBarAtm_hA_BR_dune10kt_1x2x6_54053565_607_20220331T192335Z_gen_g4_detsim_reco_65751406_0_20230125T150414Z_reReco.root
+export SAMPLE_FILE=root://fndca1.fnal.gov:1094//pnfs/fnal.gov/usr/dune/persistent/users/schellma/tutorial_2025/NNBarAtm_hA_BR_dune10kt_1x2x6_54053565_607_20220331T192335Z_gen_g4_detsim_reco_65751406_0_20230125T150414Z_reReco.root
 ~~~
 {: .language-bash}
+
+<!-- FIXME get a CERN sample file -->
 
 The examples below will refer to files in `dCache` at Fermilab which can best be accessed via `xrootd`. 
 
@@ -432,7 +438,7 @@ The LArSoft toolkit is a set of software components that simulate and reconstruc
 
 LArSoft provides a collection of shared simulation, reconstruction, and analysis tools, with art interfaces.  Often, a useful algorithm will be developed by an experimental collaboration, and desire to share it with other LArTPC collaborations, which is how much of the software in LArSoft came to be.  Interfaces and services have to be standardized for shared use.  Things like the detector geometry and the dead channel list, for example, are detector-specific, but shared simulation and reconstruction algorithms need to be able to access information from these services, which are not defined until an experiment's software stack is set up and the lar program is invoked.  LArSoft therefore uses plug-ins and class inheritance extensively to deal with these situations.
 
-A recent graph of the UPS products in a full stack starting with dunesw is available [here](https://wiki.dunescience.org/w/img_auth.php/0/07/Dunesw_v10_00_04d00_e26-prof_graph.pdf) (dunesw). You can see the LArSoft pieces under dunesw, as well as GEANT4, GENIE, ROOT, and a few others.
+A recent graph of the UPS products in a full stack starting with dunesw is available [here](https://wiki.dunescience.org/w/img_auth.php/0/07/Dunesw_v10_07_00d00_e26-prof_graph.pdf) (dunesw). You can see the LArSoft pieces under dunesw, as well as GEANT4, GENIE, ROOT, and a few others.
 
 ### LArSoft Data Products
 
@@ -484,7 +490,7 @@ Try it yourself! The workflow for ProtoDUNE-SP MC is given in the [Simulation Ta
  cd /exp/dune/data/users/$USER/tutorialtest
  source /cvmfs/dune.opensciencegrid.org/products/dune/setup_dune.sh
 
- export DUNELAR_VERSION=v10_00_04d00
+ export DUNELAR_VERSION=v10_07_00d00
  export DUNELAR_QUALIFIER=e26:prof
  setup dunesw $DUNELAR_VERSION -q $DUNELAR_QUALIFIER
 
