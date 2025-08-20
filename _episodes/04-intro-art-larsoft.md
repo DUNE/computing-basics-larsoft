@@ -484,6 +484,8 @@ Try it yourself! The workflow for ProtoDUNE-SP MC is given in the [Simulation Ta
 
 ### Running on a dunegpvm machine at Fermilab
 
+Warning - this takes time and has high peak memory use.
+
 ~~~
  export USER=`whoami`
  mkdir -p /exp/dune/data/users/$USER/tutorialtest
@@ -494,7 +496,8 @@ Try it yourself! The workflow for ProtoDUNE-SP MC is given in the [Simulation Ta
  export DUNELAR_QUALIFIER=e26:prof
  setup dunesw $DUNELAR_VERSION -q $DUNELAR_QUALIFIER
 
- TMPDIR=/tmp lar -n 1 -c mcc12_gen_protoDune_beam_cosmics_p1GeV.fcl -o gen.root
+ TMPDIR=/tmp 
+ lar -n 1 -c mcc12_gen_protoDune_beam_cosmics_p1GeV.fcl -o gen.root
  lar -n 1 -c protoDUNE_refactored_g4_stage1.fcl gen.root -o g4_stage1.root
  lar -n 1 -c protoDUNE_refactored_g4_stage2_sce_datadriven.fcl g4_stage1.root -o g4_stage2.root
  lar -n 1 -c protoDUNE_refactored_detsim_stage1.fcl g4_stage2.root -o detsim_stage1.root

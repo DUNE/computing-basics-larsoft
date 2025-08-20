@@ -24,7 +24,7 @@ keypoints:
 - Do an exercise to help us check if all is good
 - Get streaming and grid access
 
-Please follow the setup procedures for the [Computing Basics tutorial](https://dune.github.io/computing-basics/setup) and review the materials on [storage](https://hschellman.github.io/computing-basics/02-storage-spaces/index.html) and [data management](https://hschellman.github.io/computing-basics/03-data-management/index.html) before starting this tutorial. 
+Before the tutorial: please follow the setup procedures for the [Computing Basics tutorial](https://dune.github.io/computing-basics/setup) and review the materials on [storage](https://hschellman.github.io/computing-basics/02-storage-spaces/index.html) and [data management](https://hschellman.github.io/computing-basics/03-data-management/index.html) before starting this tutorial. 
 
 ### Useful Links
    

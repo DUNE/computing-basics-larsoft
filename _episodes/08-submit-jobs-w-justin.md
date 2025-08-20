@@ -16,9 +16,9 @@ __The JustIn Tutorial is currently in docdb at: [JustIn Tutorial](https://docs.d
 
 The JustIn system is describe in detail at: 
 
-__[JustIn Home](https://justin.dune.hep.ac.uk/dashboard/)__
+__[JustIn Home](https://dunejustin.fnal.gov/dashboard/)__
 
-__[JustIn Docs](https://justin.dune.hep.ac.uk/docs/)__
+__[JustIn Docs](https://dunejustin.fnal.gov/docs/)__
 
 
 > ## Note More documentation coming soon
