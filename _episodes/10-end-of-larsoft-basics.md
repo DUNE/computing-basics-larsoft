@@ -34,8 +34,8 @@ Learn about `bash`, `github`, `python`, `cmake`, `root` and many more HEP comput
 - [Make your code more efficient]({{ site.baseurl }}/05.1-improve-code-efficiency.md)
 - [The MRB build system]({{ site.baseurl }}/05.5-mrb.md)
 - [How to modify and rebuild LArSoft Modules]({{ site.baseurl }}/06-larsoft-modify-module.md)
-- [Grid job submission]({{ site.baseurl }}/07-grid-job-submission.md)
-- [Grid job submission with justin]({{ site.baseurl }}/08-submit-jobs-w-justin.md)
-- [Debugging grid jobs]({{ site.baseurl }}/09-grid-batch-debug.md)
+<!-- - [Grid job submission]({{ site.baseurl }}/07-grid-job-submission.md) -->
+<!-- - [Grid job submission with justin]({{ site.baseurl }}/08-submit-jobs-w-justin.md)
+- [Debugging grid jobs]({{ site.baseurl }}/09-grid-batch-debug.md) -->
 
 ---

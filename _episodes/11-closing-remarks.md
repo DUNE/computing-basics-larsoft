@@ -33,9 +33,9 @@ Art and LArSoft were introduced
 
 We are thankful for the instructor's hard work, and for the numerous participants who joined.
 
-##  Survey time!
+<!-- ##  Survey time!
 
-Please give us feedback on this training by filling out our [S U R V E Y](https://forms.gle/qPW8t97EWvbxQtKGA). Entries to the survey are anonymous, any impressions, praise, critiques and suggestions are appreciated.
+Please give us feedback on this training by filling out our [S U R V E Y](https://forms.gle/qPW8t97EWvbxQtKGA). Entries to the survey are anonymous, any impressions, praise, critiques and suggestions are appreciated. -->
 
 ##  Next Steps
 
