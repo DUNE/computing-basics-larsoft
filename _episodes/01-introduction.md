@@ -62,9 +62,9 @@ source mysetup7.sh
 Here are some example scripts that do most of the setups explained in this tutorial.  You need to store these in your home area, source them every time you log in, and possibly update them as code versions evolve. 
 
 
-- [SL7 setup]({{ site.baseurl }}/sl7_setup)
+- [SL7 setup](https://dune.github.io/computing-basics/sl7_setup)
 
-- [AL9 setup]({{ site.baseurl }}/al9_setup)
+- [AL9 setup](https://dune.github.io/computing-basics//al9_setup)
 
 > ## If you run into problems, check out the [Common Error Messages]({{ site.baseurl }}/ErrorMessages) page and the [FAQ page](https://github.com/orgs/DUNE/projects/19/)
 > if that doesn't help, use Slack to ask us about the problem - there is always a new one cropping up.
