@@ -31,8 +31,8 @@ Learn about `bash`, `github`, `python`, `cmake`, `root` and many more HEP comput
 
 - [The LArSoft tutorial at CERN, February 3-7, 2025](https://indico.cern.ch/event/1461779/) password on the [tutorials page](https://wiki.dunescience.org/wiki/Computing_tutorials)
 
-- [Make your code more efficient]({{ site.baseurl }}/05.1-improve-code-efficiency.md)
-- [The MRB build system]({{ site.baseurl }}/05.5-mrb.md)
-- [How to modify and rebuild LArSoft Modules]({{ site.baseurl }}/06-larsoft-modify-module.md)
+- [Make your code more efficient]({{ site.baseurl }}/05.1-improve-code-efficiency)
+- [The MRB build system]({{ site.baseurl }}/05.5-mrb)
+- [How to modify and rebuild LArSoft Modules]({{ site.baseurl }}/06-larsoft-modify-module)
 
 ---
