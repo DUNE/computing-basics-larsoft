@@ -62,9 +62,9 @@ source mysetup7.sh
 Here are some example scripts that do most of the setups explained in this tutorial.  You need to store these in your home area, source them every time you log in, and possibly update them as code versions evolve. 
 
 
-- [SL7 setup]({{ site.baseurl }}/sl7_setup)
+- [SL7 setup](https://dune.github.io/computing-basics/sl7_setup)
 
-- [AL9 setup]({{ site.baseurl }}/al9_setup)
+- [AL9 setup](https://dune.github.io/computing-basics/al9_setup)
 
 > ## If you run into problems, check out the [Common Error Messages]({{ site.baseurl }}/ErrorMessages) page and the [FAQ page](https://github.com/orgs/DUNE/projects/19/)
 > if that doesn't help, use Slack to ask us about the problem - there is always a new one cropping up.
@@ -95,7 +95,7 @@ Here are some example scripts that do most of the setups explained in this tutor
 There will be live documents linked from [Indico][indico-event-link] for each [Zoom][zoom-link] session. You can write questions there, anonymously or not, and experts will reply. The chat on Zoom can quickly saturate so this is a more convenient solution and proved very successful at the previous training. We will collect all questions and release a Q&A after the event.
 -->
 
-You must be on the DUNE Collaboration member list and have a valid FNAL or CERN account. See the old [Indico Requirement page][indico-event-requirements] for more information. Windows users are invited to review the [Windows Setup page]({{ site.baseurl }}/Windows.html).
+You must be on the DUNE Collaboration member list and have a valid FNAL or CERN account. See the old [Indico Requirement page][indico-event-requirements] for more information. Windows users are invited to review the [Windows Setup page](https://dune.github.io/computing-basics/Windows.html).
 
 You should join the DUNE Slack instance and look in [#computing-training-basics](https://dunescience.slack.com/archives/C02TJDHUQPR) for help with this tutorial
 

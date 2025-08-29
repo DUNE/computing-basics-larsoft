@@ -79,7 +79,7 @@ Create two scripts in your home directory:
 
 ~~~
 #!/bin/bash
-export DUNELAR_VERSION=v10_00_04d00
+export DUNELAR_VERSION=v10_07_00d00
 export PROTODUNEANA_VERSION=$DUNELAR_VERSION
 DUNELAR_QUALIFIER=e26:prof
 DIRECTORY=2024tutorial
