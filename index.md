@@ -8,7 +8,7 @@ country: "us"
 language: "en"
 latitude: "45"
 longitude: "-1"
-humandate: "2024"
+humandate: "2025"
 humantime: "asynchronous"
 startdate: "2025-09-01"
 enddate: "2025-12-01"
@@ -41,6 +41,7 @@ Mentors will answer your questions and provide technical support.
 > 2. A computer set up so that you can log into a remote unix system at FNAL or CERN.  
 >   This will include getting DUNE computing accounts at FNAL or CERN.      
 >   See [DUNE Basic Setup](https://dune.github.io/computing-basics/setup.html) to do pre-class setup.  
+>   You need to make certain you can log into CERN or FNAL DUNE systems before proceeding. 
 {: .prereq}
 
 By the end of this workshop, participants will know how to:
@@ -49,7 +50,7 @@ By the end of this workshop, participants will know how to:
 * Understand good data management practices. -->
 * Provide a basic overview of art and LArSoft to a new researcher.
 
-There are additional materials provided that explain:
+The trainin group provides additional materialsthat explain:
 
 * [Storage and Data Management](https://dune.github.io/computing-basics)
 * [Modify LArSoft modules]({{ site.baseurl }}/06-larsoft-modify-module)
