@@ -524,7 +524,23 @@ To look at some raw digits in the event display, you need to decode a DAQ file o
 ~~~
  lar -c evd_protoDUNE_data.fcl /exp/dune/data/users/trj/nov2024tutorial/np04hd_raw_run028707_0075_dataflow5_datawriter_0_20240815T154544_decode.root
 ~~~
+{: ..language-bash}
+
 which is a file taken in August 2024.
+
+### Running on HDF5 raw data
+
+One has to load (on the same line) a special library to stream HDF5 formatted data from vd-protodune and hd-protodune.
+
+'LD_PRELOAD=$XROOTD_LIB/libXrdPosixPreload.so ' has to be on the same line as your 'lar' command. 
+
+in your apptainer:
+
+~~~
+export DATA=root://ccxrootdegee.in2p3.fr:1094/pnfs/in2p3.fr/data/dune/disk/hd-protodune/d1/a6/np04hd_raw_run029147_0032_dataflow4_datawriter_0_20240912T110618.hdf5
+LD_PRELOAD=$XROOTD_LIB/libXrdPosixPreload.so lar -c standard_reco_protodunehd_keepup.fcl $DATA -n 1
+~~~
+{: ..language-bash}
 
 ### Running at CERN
 
@@ -665,6 +681,7 @@ ups list -aK+ garsoft
 and you can check out the source and build it by following the instructions on the [GArSoft wiki](https://cdcvs.fnal.gov/redmine/projects/garsoft/wiki).
 
 
+<!-- 
 ## Quiz
 
 > ## Question 01
@@ -683,7 +700,9 @@ and you can check out the source and build it by following the instructions on t
 > > {: .output}
 > > Comment here 
 > {: .solution}
-{: .challenge}
+{: .challenge} 
+
+-->
 
 
 {%include links.md%} 
