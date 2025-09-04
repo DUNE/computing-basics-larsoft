@@ -1,5 +1,5 @@
 ---
-title: End of the basics lesson - Continue on your own to learn how to build code and submit batch jobs
+title: End of the larsoft basics lesson - Continue on your own to learn how to submit batch jobs
 teaching: 5
 exercises: 0
 questions:
@@ -11,6 +11,12 @@ keypoints:
 - There is more documentation!
 - People are here to help
 ---
+
+## Batch jobs
+
+Batch job submission has been split out into 
+
+[Batch jobs](https://dune.github.io/computing-basics-batch)
 
 ## You can ask questions here:
 
