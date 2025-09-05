@@ -69,7 +69,7 @@ The *art* wiki page is here: [https://cdcvs.fnal.gov/redmine/projects/art/wiki][
 
 The configuration storage is particularly useful if you receive a data file from a colleague, or find one in a data repository and you want to know more about how it was produced, with what settings.
 
-### Getting set up to try the tools
+### Getting set up to try the tools - use SL7 for now!
 
 Log in to a `dunegpvm*.fnal.gov` or `lxplus.cern.ch` machine and set up your environment (This script is defined in Exercise 5 of https://dune.github.io/computing-basics/setup.html)
 
@@ -82,9 +82,7 @@ alias dunesl7="/cvmfs/oasis.opensciencegrid.org/mis/apptainer/current/bin/apptai
 
 alias dunesl7build="/cvmfs/oasis.opensciencegrid.org/mis/apptainer/current/bin/apptainer shell --shell=/bin/bash -B /cvmfs,/exp,/build,/nashome,/opt,/run/user,/etc/hostname,/etc/hosts,/etc/krb5.conf --ipc --pid /cvmfs/singularity.opensciencegrid.org/fermilab/fnal-dev-sl7:latest"
 
-alias dunesl7CERN="/cvmfs/oasis.opensciencegrid.org/mis/apptainer/current/bin/apptainer shell --shell=/bin/bash \
--B /cvmfs,/afs,/opt,/run/user,/etc/hostname --ipc --pid \
-/cvmfs/singularity.opensciencegrid.org/fermilab/fnal-dev-sl7:latest"
+alias dunesl7CERN="/cvmfs/oasis.opensciencegrid.org/mis/apptainer/current/bin/apptainer shell --shell=/bin/bash -B /cvmfs,/afs,/opt,/run/user,/etc/hostname --ipc --pid /cvmfs/singularity.opensciencegrid.org/fermilab/fnal-dev-sl7:latest"
 
 alias dunesetups="source /cvmfs/dune.opensciencegrid.org/products/dune/setup_dune.sh"
 ~~~
@@ -163,6 +161,8 @@ It is often useful to pipe the output through grep to find a particular product.
 {: .language-bash}
 
 for example, to see what version of geant4 you have set up.
+
+To learn more about `ups` there is [more documentation here](https://dune.github.io/computing-basics/03.2-UPS).
 
 ### *Art* command-line tools
 
@@ -438,7 +438,7 @@ The LArSoft toolkit is a set of software components that simulate and reconstruc
 
 LArSoft provides a collection of shared simulation, reconstruction, and analysis tools, with art interfaces.  Often, a useful algorithm will be developed by an experimental collaboration, and desire to share it with other LArTPC collaborations, which is how much of the software in LArSoft came to be.  Interfaces and services have to be standardized for shared use.  Things like the detector geometry and the dead channel list, for example, are detector-specific, but shared simulation and reconstruction algorithms need to be able to access information from these services, which are not defined until an experiment's software stack is set up and the lar program is invoked.  LArSoft therefore uses plug-ins and class inheritance extensively to deal with these situations.
 
-A recent graph of the UPS products in a full stack starting with dunesw is available [here](https://wiki.dunescience.org/w/img_auth.php/0/07/Dunesw_v10_00_04d00_e26-prof_graph.pdf) (dunesw). You can see the LArSoft pieces under dunesw, as well as GEANT4, GENIE, ROOT, and a few others.
+A recent graph (v10_00) of the UPS products in a full stack starting with dunesw is available [here](../fig/Dunesw_graph.pdf) (dunesw). You can see the LArSoft pieces under dunesw, as well as GEANT4, GENIE, ROOT, and a few others.
 
 ### LArSoft Data Products
 
@@ -553,14 +553,13 @@ The apptainer command is slightly different as the mounts are different. Here we
 {: .callout}
 
 ~~~
-/cvmfs/oasis.opensciencegrid.org/mis/apptainer/current/bin/apptainer shell --she
-ll=/bin/bash \
--B /cvmfs,/afs,/opt,/run/user,/etc/hostname,/etc/krb5.conf --ipc --pid \
-/cvmfs/singularity.opensciencegrid.org/fermilab/fnal-dev-sl7:latest
+/cvmfs/oasis.opensciencegrid.org/mis/apptainer/current/bin/apptainer shell --shell=/bin/bash -B /cvmfs,/afs,/opt,/run/user,/etc/hostname,/etc/krb5.conf --ipc --pid  /cvmfs/singularity.opensciencegrid.org/fermilab/fnal-dev-sl7:latest
 ~~~
 {: .language-bash}
 
-Make a fcl file:
+Make a fcl file and call it tmpgen.fcl 
+
+
 
 ~~~
 #include "mcc12_gen_protoDune_beam_cosmics_p1GeV.fcl"
@@ -568,21 +567,38 @@ physics.producers.generator.FileName: "/afs/cern.ch/work/t/tjunk/public/may2023t
 ~~~
 {: .source}
 
+> ## if you have difficulties opening an editor
+> > ~~~
+> > echo '#include "mcc12_gen_protoDune_beam_cosmics_p1GeV.fcl"' > tmpgen.fcl
+> > echo 'physics.producers.generator.FileName: "/afs/cern.ch/work/t/tjunk/public/may2023tutorialfiles/H4_v34b_1GeV_-27.7_10M_1.root"' >> tmpgen.fcl
+> > ~~~
+> > {: .language-bash}
+{: .solution}
+
+then do some setup 
+
 ~~~ 
  cd ~
  mkdir 2024Tutorial
  cd 2024Tutorial
  source /cvmfs/dune.opensciencegrid.org/products/dune/setup_dune.sh
 
- export DUNELAR_VERSION=v10_00_04
+ export DUNELAR_VERSION=v10_07_00d00
  export LARSOFT_VERSION=${DUNELAR_VERSION}
  export DUNELAR_QUALIFIER=e26:prof
  setup dunesw $DUNELAR_VERSION -q $DUNELAR_QUALIFIER
+~~~
+{: ..language-bash}
 
+<!-- 
  #cat > tmpgen.fcl << EOF
  ##include "mcc12_gen_protoDune_beam_cosmics_p1GeV.fcl"
  #physics.producers.generator.FileName: "/afs/cern.ch/work/t/tjunk/public/may2023tutorialfiles/H4_v34b_1GeV_-27.7_10M_1.root"
- #EOF
+ #EOF 
+ -->
+
+Now you can run a sequence of lar steps to generate and reconstruct a file. 
+~~~
  lar -n 1 -c tmpgen.fcl -o gen.root
  lar -n 1 -c protoDUNE_refactored_g4_stage1.fcl gen.root -o g4_stage1.root
  lar -n 1 -c protoDUNE_refactored_g4_stage2_sce_datadriven.fcl g4_stage1.root -o g4_stage2.root
