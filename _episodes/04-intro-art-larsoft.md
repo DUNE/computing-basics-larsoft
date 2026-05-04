@@ -73,8 +73,34 @@ The configuration storage is particularly useful if you receive a data file from
 
 Log in to a `dunegpvm*.fnal.gov` or `lxplus.cern.ch` machine and set up your environment (This script is defined in Exercise 5 of https://dune.github.io/computing-basics/setup.html)
 
+
+
 > ## Note
-> For now do this in the Apptainer.  Due to the need to set up the container separately at CERN, on the build nodes, and  on the gpvms due to /pnfs mounts being different, and the need to keep your environment clean for use on other experiments, it is best to define aliases in your .profile or .bashrc or other login script you use to define aliases.  A set of convenient aliases is
+> For now do this in the Apptainer.
+> Choose your apptainer 
+> > ## gpvm apptainer
+> > ~~~
+> > {% include apptainer_gpvm.md %}
+> > ~~~
+> > {: .language-bash}
+> {: .solution}
+> > ## build machine apptainer
+> > pnfs is not mounted on the build machines
+> > ~~~
+> > {% include apptainer_build.md %}
+> > ~~~
+> > {: .language-bash}
+> {: .solution}
+> > ## cern apptainer
+> > ~~~
+> > {% include apptainer_cern.md %}
+> > ~~~
+> > {: .language-bash}
+> {: .solution}
+{: .challenge}
+
+> ## Another note
+>  Due to the need to set up the container separately at CERN, on the build nodes, and  on the gpvms due to /pnfs mounts being different, and the need to keep your environment clean for use on other experiments, it is best to define aliases in your .profile or .bashrc or other login script you use to define aliases.  A set of convenient aliases is
 {: .challenge}
 
 ~~~
