@@ -131,7 +131,7 @@ export DUNELAR_VERSION=v10_17_00d00
 export DUNELAR_QUALIFIER=e26:prof
 setup dunesw $DUNELAR_VERSION -q $DUNELAR_QUALIFIER
 
-setup_fnal_security
+<get a token>
 ~~~
 {: .language-bash}
 
