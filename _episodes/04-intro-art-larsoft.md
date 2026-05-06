@@ -127,7 +127,7 @@ dunesl7
 source .profile
 dunesetups
 
-export DUNELAR_VERSION=v10_07_00d00
+export DUNELAR_VERSION=v10_17_00d00
 export DUNELAR_QUALIFIER=e26:prof
 setup dunesw $DUNELAR_VERSION -q $DUNELAR_QUALIFIER
 
@@ -518,7 +518,7 @@ Warning - this takes time and has high peak memory use.
  cd /exp/dune/data/users/$USER/tutorialtest
  source /cvmfs/dune.opensciencegrid.org/products/dune/setup_dune.sh
 
- export DUNELAR_VERSION=v10_07_00d00
+ export DUNELAR_VERSION=v10_17_00d00
  export DUNELAR_QUALIFIER=e26:prof
  setup dunesw $DUNELAR_VERSION -q $DUNELAR_QUALIFIER
 
@@ -609,7 +609,7 @@ then do some setup
  cd 2024Tutorial
  source /cvmfs/dune.opensciencegrid.org/products/dune/setup_dune.sh
 
- export DUNELAR_VERSION=v10_07_00d00
+ export DUNELAR_VERSION=v10_17_00d00
  export LARSOFT_VERSION=${DUNELAR_VERSION}
  export DUNELAR_QUALIFIER=e26:prof
  setup dunesw $DUNELAR_VERSION -q $DUNELAR_QUALIFIER
