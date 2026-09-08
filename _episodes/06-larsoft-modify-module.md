@@ -56,6 +56,13 @@ Link to the [mrb]({{ site.baseurl }}/05.5-mrb) episode
 
 ## getting set up
 
+This episode builds code with `mrb`, which does not yet work under Spack on AL9, so it
+runs entirely in the SL7 Apptainer container. Start the container from a shell where the
+Spack `dune-prototype` environment is **not** active: Apptainer copies the parent
+environment in, and a leaked `LD_LIBRARY_PATH` makes the container's tools load the AL9
+ROOT libraries and fail with `GLIBC_2.33 not found`. See the
+[setup episode]({{ site.baseurl }}/setup) for the container aliases and details.
+
 You will need *three* login sessions.  These have different
 environments set up.
 
@@ -79,7 +86,7 @@ Create two scripts in your home directory:
 
 ~~~
 #!/bin/bash
-export DUNELAR_VERSION=v10_07_00d00
+export DUNELAR_VERSION=v10_22_00d01
 export PROTODUNEANA_VERSION=$DUNELAR_VERSION
 DUNELAR_QUALIFIER=e26:prof
 DIRECTORY=2024tutorial
@@ -107,6 +114,21 @@ mrbsetenv
 mrb i -j16
 ~~~
 {: .language-bash}
+
+> ## Instructor check: dunesw version and protoduneana tag
+> `DUNELAR_VERSION` above must match the rest of the lesson. Verified 2026-09-07 in the
+> SL7 container: `ups list -aK+ dunesw` shows `v10_22_00d01` with the `e26:prof`
+> qualifier, `mrb g -t v10_22_00d01 protoduneana` checks out a real release tag, and
+> `mrbsetenv` configures with no version mismatch. Re-check `ups list -aK+ dunesw` near
+> the session date and bump `DUNELAR_VERSION` if it has moved.
+>
+> Two warnings during this setup are expected and harmless: `cannot find
+> larsoft//releaseDB/base_dependency_database` during `mrb newDev` (the larsoft release
+> database is not populated for the DUNE flavor), and `could not identify a
+> product/project version` during `mrbsetenv` (the generated top-level `srcs/CMakeLists.txt`
+> has no project version; the package still builds). A genuine version mismatch names the
+> conflicting products and stops `mrbsetenv`.
+{: .callout}
 
 and `setup2024Tutorial.sh` should have these contents:
 
