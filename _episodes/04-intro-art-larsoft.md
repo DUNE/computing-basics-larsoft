@@ -1,25 +1,18 @@
 ---
-title: Introduction to art and LArSoft (2025 - Apptainer version)
+title: Introduction to art and LArSoft
 teaching: 50
 exercises: 0
 questions:
 - Why do we need a complicated software framework? Can't I just write standalone code?
 objectives:  
 - Learn what services the *art* framework provides.
-- Learn how the LArSoft tookit is organized and how to use it.
+- Learn how the LArSoft toolkit is organized and how to run its command-line tools.
 keypoints:
 - Art provides the tools physicists in a large collaboration need in order to contribute software to a large, shared effort without getting in each others' way.
 - Art helps us keep track of our data and job configuration, reducing the chances of producing mystery data that no one knows where it came from.
 - LArSoft is a set of simulation and reconstruction tools shared among the liquid-argon TPC collaborations.
+- Running these tools on existing files works under AL9 and the dune-prototype Spack environment; building or modifying them still needs the SL7 container.
 ---
-
-#### Session Video
-
-The session video on December 10, 2024 was captured for your asynchronous review. 
-
-<center>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/u_HnXTxUs9Y" title="DUNE Computing Tutorial Dec 2024 Data Management" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-</center>
 
 <!--
 #### Live Notes
@@ -39,12 +32,6 @@ This lesson includes collapsable quiz blocks which are encouraged, a blank quiz 
 <!-- The official timetable for this training event is on the [Indico site](https://indico.fnal.gov/event/59762/timetable/#20230524).
 
 -->
-
-## Advertisement -- February 2025 LArSoft workshop at CERN
-
-[https://indico.cern.ch/event/1461779/overview](https://indico.cern.ch/event/1461779/overview)
-
-This page is protected by a password.  Dom Brailsford sent this password in an e-mail to the DUNE Collaboration on November 6, 2024.
 
 ## Introduction to *art*
 
@@ -69,65 +56,121 @@ The *art* wiki page is here: [https://cdcvs.fnal.gov/redmine/projects/art/wiki][
 
 The configuration storage is particularly useful if you receive a data file from a colleague, or find one in a data repository and you want to know more about how it was produced, with what settings.
 
-### Getting set up to try the tools - use SL7 for now!
+### Getting set up to try the tools
 
-Log in to a `dunegpvm*.fnal.gov` or `lxplus.cern.ch` machine and set up your environment (This script is defined in Exercise 5 of https://dune.github.io/computing-basics/setup.html)
+Log in to a `dunegpvmXX.fnal.gov` machine, which runs Alma Linux 9 with no container
+needed, or to `lxplus.cern.ch`. Set up your environment as in the
+[setup episode]({{ site.baseurl }}/setup).
 
+This episode only *runs* existing LArSoft and `dunesw` tools on existing files. It does
+not build or modify code, so the AL9 Spack environment is all you need. Checking out and
+modifying code (Episodes 05.5 and 06) still needs the SL7 container; see the fallback at
+the end of this section.
 
+> ## Do not mix environments
+> Source either the AL9/Spack setup or the SL7 container in a given shell, not both.
+> Start a fresh shell when you switch.
+{: .callout}
 
-> ## Note
-> For now do this in the Apptainer.
-> Choose your apptainer 
-> > ## gpvm apptainer
-> > ~~~
-> > {% include apptainer_gpvm.md %}
-> > ~~~
-> > {: .language-bash}
-> {: .solution}
-> > ## build machine apptainer
-> > pnfs is not mounted on the build machines
-> > ~~~
-> > {% include apptainer_build.md %}
-> > ~~~
-> > {: .language-bash}
-> {: .solution}
-> > ## cern apptainer
-> > ~~~
-> > {% include apptainer_cern.md %}
-> > ~~~
-> > {: .language-bash}
-> {: .solution}
-{: .challenge}
+#### AL9 / Spack setup (default)
 
-> ## Another note
->  Due to the need to set up the container separately at CERN, on the build nodes, and  on the gpvms due to /pnfs mounts being different, and the need to keep your environment clean for use on other experiments, it is best to define aliases in your .profile or .bashrc or other login script you use to define aliases.  A set of convenient aliases is
-{: .challenge}
+Start from a clean shell with no other experiment's setup sourced.
 
 ~~~
-alias dunesl7="/cvmfs/oasis.opensciencegrid.org/mis/apptainer/current/bin/apptainer shell --shell=/bin/bash -B /cvmfs,/exp,/nashome,/pnfs/dune,/opt,/run/user,/etc/hostname,/etc/hosts,/etc/krb5.conf --ipc --pid /cvmfs/singularity.opensciencegrid.org/fermilab/fnal-dev-sl7:latest"
-
-alias dunesl7build="/cvmfs/oasis.opensciencegrid.org/mis/apptainer/current/bin/apptainer shell --shell=/bin/bash -B /cvmfs,/exp,/build,/nashome,/opt,/run/user,/etc/hostname,/etc/hosts,/etc/krb5.conf --ipc --pid /cvmfs/singularity.opensciencegrid.org/fermilab/fnal-dev-sl7:latest"
-
-alias dunesl7CERN="/cvmfs/oasis.opensciencegrid.org/mis/apptainer/current/bin/apptainer shell --shell=/bin/bash -B /cvmfs,/afs,/opt,/run/user,/etc/hostname --ipc --pid /cvmfs/singularity.opensciencegrid.org/fermilab/fnal-dev-sl7:latest"
-
-alias dunesetups="source /cvmfs/dune.opensciencegrid.org/products/dune/setup_dune.sh"
+source /cvmfs/dune.opensciencegrid.org/spack/setup-env.sh
+spack env activate dune-prototype
 ~~~
 {: .language-bash}
 
-Then you can use the appropriate alias to start the SL7 container on either the build node or the gpvms or lxplus. Starting a container gives you a very bare environment -- it does not source your .profile for you; you have to do that yourself.  The examples below assume you put the aliases above in your .profile or in a script sourced by your .profile.  I always set the prompt variable PS1 in my profile so I can tell that I've sourced it.
+Activating the environment puts `lar`, `root`, and the rest of `dunesw` on your path.
+No separate `spack load` is needed. For Spack and MPD documentation and issue tracking,
+see the [DUNE Spack project](https://dune.github.io/dune-spack-project/).
+
+> ## Instructor check: environment
+> Verified 2026-09-07 on `dunegpvm13`: spack instance **v1.2.2**, environment
+> **`dune-prototype`**, `dunesw@10.22.00d01`, `root@6.28.12`. `setup-env.sh` selects the
+> current instance automatically (v1.0 and v1.1 are deprecated). Spack and MPD docs,
+> config reference, and issues:
+> [https://dune.github.io/dune-spack-project/](https://dune.github.io/dune-spack-project/).
+>
+> In a live session, confirm `spack env list` includes `dune-prototype`, and that
+> `which lar` and `root --version` both resolve after the activate.
+>
+> > ## What you should see
+> > ~~~
+> > $ which lar && root --version
+> > /cvmfs/dune.opensciencegrid.org/spack/environments/dune-prototype/.spack-env/view/bin/lar
+> > ROOT Version: 6.28/12
+> > ~~~
+> > {: .output}
+> {: .solution}
+{: .callout}
+
+Define the sample file used through this episode. This is an xrootd URL; file access
+works the same way in either environment.
+
+~~~
+export SAMPLE_FILE=root://fndca1.fnal.gov:1094//pnfs/fnal.gov/usr/dune/persistent/users/schellma/tutorial_2025/NNBarAtm_hA_BR_dune10kt_1x2x6_54053565_607_20220331T192335Z_gen_g4_detsim_reco_65751406_0_20230125T150414Z_reReco.root
+~~~
+{: .language-bash}
+
+> ## Instructor TODO: confirm before teaching
+> Verify this file still exists near the session date with
+> `xrdfs fndca1.fnal.gov stat /pnfs/fnal.gov/usr/dune/persistent/users/schellma/tutorial_2025/NNBarAtm_hA_BR_dune10kt_1x2x6_54053565_607_20220331T192335Z_gen_g4_detsim_reco_65751406_0_20230125T150414Z_reReco.root`.
+> It sits in a user persistent area from an earlier tutorial and could be cleaned up.
+> Staging a fresh copy under this year's tutorial area is the safer option.
+{: .callout}
+
+Get a token for streaming access, then check that the tools are on your path:
+
+~~~
+which lar
+lar --help
+which root
+root --version
+~~~
+{: .language-bash}
+
+If `lar --help` fails with "command not found" or a missing-library error, `dunesw` is
+not set up in your session. Stop and flag it rather than continuing into the exercises
+below. The Spack environment may have changed since this page was last checked; ask in
+`#computing-training-basics` on DUNE Slack.
+
+The examples below refer to files in `dCache` at Fermilab, which are best accessed with
+`xrootd`.
+
+> ## No Fermilab access but a CERN account
+> Copies of the tutorial files are in
+> `/afs/cern.ch/work/t/tjunk/public/jan2023tutorialfiles/`.
+{: .callout}
+
+The follow-up of this tutorial provides help on how to find data and MC files in storage.
+
+#### SL7 container fallback
+
+You need this only if a command in this episode fails under Spack, or if you are
+continuing to Episodes 05.5 and 06. `mrb` and UPS-based development do not yet work
+under Spack on AL9.
+
+Start the SL7 container with the alias for your machine (defined in the
+[setup episode]({{ site.baseurl }}/setup)): `dunesl7` on a gpvm, `dunesl7build` on a
+build node, `dunesl7CERN` at CERN. Starting a container gives you a very bare
+environment. It does not source your `.profile`, so do that yourself. I always set the
+prompt variable `PS1` in my profile so I can tell that I have sourced it:
 
 ~~~
 PS1="<`hostname`> "; export PS1
 ~~~
 {: .language-bash}
 
-Then when you log in, you can type these commands to set up your environment in a container:
+Then set up `dunesw`:
+
 ~~~
 dunesl7
 source .profile
-dunesetups
+source /cvmfs/dune.opensciencegrid.org/products/dune/setup_dune.sh
 
-export DUNELAR_VERSION=v10_17_00d00
+export DUNELAR_VERSION=v10_22_00d01
 export DUNELAR_QUALIFIER=e26:prof
 setup dunesw $DUNELAR_VERSION -q $DUNELAR_QUALIFIER
 
@@ -135,60 +178,51 @@ setup dunesw $DUNELAR_VERSION -q $DUNELAR_QUALIFIER
 ~~~
 {: .language-bash}
 
-~~~
-# define a sample file
-export SAMPLE_FILE=root://fndca1.fnal.gov:1094//pnfs/fnal.gov/usr/dune/persistent/users/schellma/tutorial_2025/NNBarAtm_hA_BR_dune10kt_1x2x6_54053565_607_20220331T192335Z_gen_g4_detsim_reco_65751406_0_20230125T150414Z_reReco.root
-~~~
-{: .language-bash}
+> ## Instructor check: dunesw version
+> `dune-prototype` on AL9 carries `dunesw@10.22.00d01` (verified 2026-09-07), so
+> `v10_22_00d01` is correct. Inside the SL7 container, confirm the UPS tag and qualifier
+> with `ups list -aK+ dunesw` near the session date, and update every `DUNELAR_VERSION`
+> in this lesson (including the scripts in Episode 06) if it has moved.
+{: .callout}
 
-<!-- FIXME get a CERN sample file -->
+Once `dunesw` is set up this way, every command in the rest of this episode
+(`config_dumper`, `fhicl-dump`, `count_events`, `product_sizes_dumper`, `lar`, `root`)
+runs the same as on the AL9 path. This is the previously verified route; use it to get a
+session unblocked while any AL9 gaps are sorted out.
 
-The examples below will refer to files in `dCache` at Fermilab which can best be accessed via `xrootd`. 
-
-**For those with no access to Fermilab computing resources but with a CERN account:**  
-Copies are stored in `/afs/cern.ch/work/t/tjunk/public/jan2023tutorialfiles/`.
-
-The follow-up of this tutorial provides help on how to find data and MC files in storage.
-
-You can list available versions of `dunesw` installed in `CVMFS` with this command:
+You can list available versions of `dunesw` in `CVMFS` with:
 
 ~~~
 ups list -aK+ dunesw
 ~~~
 {: .language-bash}
 
-The output is not sorted, although portions of it may look sorted. Do not depend on it being sorted. The string indicating the version is called the version tag (v09_72_01d00 here). The qualifiers are e26 and prof. Qualifiers can be entered in any order and are separated by colons.  "e26" corresponds to a specific version of the GNU compiler -- v9.3.0.   We also compile with `clang` -- the compiler qualifier for that is "c7".
+The output is not sorted, although portions of it may look sorted. Do not depend on it
+being sorted. The version tag looks like `v10_22_00d01`. The qualifiers here are `e26`
+and `prof`. Qualifiers can be entered in any order and are separated by colons. "e26"
+corresponds to a specific version of the GNU compiler. We also compile with `clang`; the
+compiler qualifier for that is "c7". "prof" means compiled with optimizations turned on,
+"debug" means turned off. More information on qualifiers is [here][about-qualifiers].
 
-"prof" means "compiled with optimizations turned on." "debug" means "compiled with optimizations turned off". More information on qualifiers is [here][about-qualifiers].
+`UPS` products also have "flavors", meaning the operating system type and version.
+Currently only SL7 and the compatible CentOS 7 are supported. The flavor is selected
+automatically to match your OS when you set up a product. Products that do not depend on
+OS libraries are "unflavored" and listed with a flavor of "NULL".
 
-In addition to the version and qualifiers, `UPS` products have "flavors". This refers to the operating system type and version. Older versions of DUNE software supported `SL6` and some versions of macOS. Currently only SL7 and the compatible CentOS 7 are supported. The flavor of a product is automatically selected to match your current operating system when you set up a product. If a product does not have a compatible flavor, you will get an error message.  "Unflavored" products are ones that do not depend on the operating-system libraries.  They are listed with a flavor of "NULL". 
+The operating system provides its own `setup` command, which you usually do not want. If
+you have not sourced `setup_dune.sh` but type `setup xyz` anyway, you get the system
+`setup`, which asks for the root password. Type `control-C`, source `setup_dune.sh`, and
+try again. On AL9 and inside the SL7 container there is no system `setup` command, so you
+get "command not found" instead.
 
-There is a setup command provided by the operating system -- you usually don't want to use it (at least not when developing DUNE software). If you haven't yet sourced the `setup_dune.sh` script in `CVMFS` above but type `setup xyz` anyway, you will get the system setup command, which will ask you for the root password. Just `control-C` out of it, source the `setup_dune.sh` script, and try again.  On AL9 and the SL7 container, there is no system setup command so you will get "command not found" if you haven't yet set up UPS.
+`UPS`'s own `setup` command (find where it lives with `type setup`) sets up the product
+you name and all dependent products at consistent versions. List everything that is set
+up with `ups active`, and pipe through `grep` to find one product, for example
+`ups active | grep geant4` to see the Geant4 version.
 
-UPS's setup command (find out where it lives with this command):
-
-~~~
-type setup
-~~~
-{: .language-bash}
-
-will not only set up the product you specify (in the instructions above, dunesw), but also all dependent products with corresponding versions so that you get a consistent software environment. You can get a list of everything that's set up with this command
-
-~~~
- ups active
-~~~
-{: .language-bash}
-
-It is often useful to pipe the output through grep to find a particular product.
-
-~~~
- ups active | grep geant4
-~~~
-{: .language-bash}
-
-for example, to see what version of geant4 you have set up.
-
-To learn more about `ups` there is [more documentation here](https://dune.github.io/computing-basics/03.2-UPS).
+To learn more about `ups` see [more documentation here](https://dune.github.io/computing-basics/03.2-UPS).
+For how the AL9 Spack environment replaces this UPS setup, and how the two compare, see
+the [DUNE Spack project](https://dune.github.io/dune-spack-project/).
 
 ### *Art* command-line tools
 
@@ -301,6 +335,13 @@ new TBrowser
 {: .language-bash}
 
 This will be faster with `VNC`. Navigate to the `Events TTree` in the file that is automatically opened, navigate to the `TBranch` with the Argon 39 MCTruths (it's near the bottom), click on the branch icon `simb::MCTruths_ar39__SinglesGen.obj`, and click on the `NParticles()` leaf (It's near the bottom. Yes, it has a red exclamation point on it, but go ahead and click on it). How many events are there? How many 39Ar decays are there per event on average?
+
+> ## Instructor TODO: confirm before teaching
+> Click-test the `TBrowser` GUI under `dune-prototype`. The env does carry the X11/GL
+> stack (`libx11`, `libxft`, `libxpm`, `mesa`, `mesa-glu`, `glew`, `gl2ps`, `ftgl`), so
+> `root@6.28.12` should have GUI support, but confirm a window actually opens over both
+> a direct X connection and VNC. Fall back to SL7 for this part only if it fails.
+{: .callout}
 
 Header files for many data products are in [lardataobj](https://github.com/larsoft/lardataobj)   and some are in [nusimdata](https://github.com/NuSoftHEP/nusimdata).
 
@@ -510,17 +551,18 @@ Try it yourself! The workflow for ProtoDUNE-SP MC is given in the [Simulation Ta
 
 ### Running on a dunegpvm machine at Fermilab
 
-Warning - this takes time and has high peak memory use.
+Warning: this takes time and has high peak memory use. The environment does not change
+that.
+
+Set up as in the [setup episode]({{ site.baseurl }}/setup). On AL9:
 
 ~~~
  export USER=`whoami`
  mkdir -p /exp/dune/data/users/$USER/tutorialtest
  cd /exp/dune/data/users/$USER/tutorialtest
- source /cvmfs/dune.opensciencegrid.org/products/dune/setup_dune.sh
 
- export DUNELAR_VERSION=v10_17_00d00
- export DUNELAR_QUALIFIER=e26:prof
- setup dunesw $DUNELAR_VERSION -q $DUNELAR_QUALIFIER
+ source /cvmfs/dune.opensciencegrid.org/spack/setup-env.sh
+ spack env activate dune-prototype
 
  TMPDIR=/tmp 
  lar -n 1 -c mcc12_gen_protoDune_beam_cosmics_p1GeV.fcl -o gen.root
@@ -535,14 +577,32 @@ Warning - this takes time and has high peak memory use.
 ~~~
 {: .language-bash}
 
-Note added November 22, 2023:  The construct "TMPDIR=/tmp lar ..." defines the environment variable TMPDIR only for the duration of the subsequent command on the line.  This is needed for the tutorial example because the mcc12 gen stage copies a 2.9 GB file (see below -- it's the one we had to copy over to CERN) to /var/tmp using ifdh's default temporary location.  But the dunegpvm machines as of November 2023 seem to rarely have 2.9 GB of space in /var/tmp and you get a "no space left on device" error.  The newer prod4 versions of the fcls point to a newer version of the beam particle generator that can stream this file using XRootD instead of copying it with ifdh.  But the streaming flag is turned off by default in the prod4 fcl for the version of dunesw used in this tutorial, and so this is the minimal solution.  Note for the next iteration:  the Prod4 fcls are here: https://wiki.dunescience.org/wiki/ProtoDUNE-SP_Production_IV
+Setting `TMPDIR=/tmp` on the same line defines that variable only for that one command.
+The generator stage needs it because the mcc12 gen `fcl` copies a 2.9 GB beam file to
+`/var/tmp` through ifdh's default temporary location, and the dunegpvm machines often do
+not have that much room in `/var/tmp`. The newer prod4 `fcl` files can stream the file
+with XRootD instead, but streaming is off by default in the prod4 `fcl` for the `dunesw`
+version used here, so setting `TMPDIR` is the smaller change. The Prod4 `fcl` files are
+[here](https://wiki.dunescience.org/wiki/ProtoDUNE-SP_Production_IV).
+
+> ## Instructor TODO: confirm before teaching
+> Check whether the `TMPDIR=/tmp` workaround is still needed under Spack. The ifdh
+> version and its default temporary location may differ from the UPS build.
+{: .callout}
 
 ### Run the event display on your new Monte Carlo event
 ~~~
  lar -c evd_protoDUNE_data.fcl reco_stage1.root
 ~~~
 {: .language-bash}
-and push the "Reconstructed" radio button at the bottom of the display.  
+and push the "Reconstructed" radio button at the bottom of the display.
+
+> ## Instructor TODO: confirm before teaching
+> Test `evd_protoDUNE_data.fcl` under `dune-prototype` specifically. `lareventdisplay`
+> is in the env and ROOT has the GUI stack, so this should work, but the event display
+> is the GUI-heaviest thing in the episode and worth a real run before teaching. Fall
+> back to the SL7 container for the event-display exercises only if it fails.
+{: .callout}
 
 ### Display decoded raw digits
 
@@ -558,30 +618,23 @@ which is a file taken in August 2024.
 
 One has to load (on the same line) a special library to stream HDF5 formatted data from vd-protodune and hd-protodune.
 
-'LD_PRELOAD=$XROOTD_LIB/libXrdPosixPreload.so ' has to be on the same line as your 'lar' command. 
-
-in your apptainer:
+`LD_PRELOAD=$XROOTD_LIB/libXrdPosixPreload.so` has to be on the same line as your `lar`
+command:
 
 ~~~
 export DATA=root://ccxrootdegee.in2p3.fr:1094/pnfs/in2p3.fr/data/dune/disk/hd-protodune/d1/a6/np04hd_raw_run029147_0032_dataflow4_datawriter_0_20240912T110618.hdf5
 LD_PRELOAD=$XROOTD_LIB/libXrdPosixPreload.so lar -c standard_reco_protodunehd_keepup.fcl $DATA -n 1
 ~~~
-{: ..language-bash}
+{: .language-bash}
 
 ### Running at CERN
 
 This example puts all files in a subdirectory of your home directory. There is an input file for the ProtoDUNE-SP beamline simulation that is copied over and you need to point the generation job at it. The above sequence of commands will work at CERN if you have a Fermilab grid proxy, but not everyone signed up for the tutorial can get one of these yet, so we copied the necessary file over and adjusted a fcl file to point at it. It also runs faster with the local copy of the input file than the above workflow which copies it.
 
-The apptainer command is slightly different as the mounts are different. Here we assume you are logged into an lxplus node running Alma9. 
-
->#### Note
-> CERN Apptainer variant
-{: .callout}
-
-~~~
-/cvmfs/oasis.opensciencegrid.org/mis/apptainer/current/bin/apptainer shell --shell=/bin/bash -B /cvmfs,/afs,/opt,/run/user,/etc/hostname,/etc/krb5.conf --ipc --pid  /cvmfs/singularity.opensciencegrid.org/fermilab/fnal-dev-sl7:latest
-~~~
-{: .language-bash}
+This assumes you are logged into an lxplus node running Alma 9 and using the
+`dune-prototype` Spack environment, set up as in the
+[setup episode]({{ site.baseurl }}/setup). If you need the SL7 container at CERN
+instead, use the `dunesl7CERN` alias from that episode.
 
 Make a fcl file and call it tmpgen.fcl 
 
@@ -601,20 +654,17 @@ physics.producers.generator.FileName: "/afs/cern.ch/work/t/tjunk/public/may2023t
 > > {: .language-bash}
 {: .solution}
 
-then do some setup 
+then do some setup. On an lxplus node running Alma 9, use the Spack environment:
 
 ~~~ 
  cd ~
  mkdir 2024Tutorial
  cd 2024Tutorial
- source /cvmfs/dune.opensciencegrid.org/products/dune/setup_dune.sh
 
- export DUNELAR_VERSION=v10_17_00d00
- export LARSOFT_VERSION=${DUNELAR_VERSION}
- export DUNELAR_QUALIFIER=e26:prof
- setup dunesw $DUNELAR_VERSION -q $DUNELAR_QUALIFIER
+ source /cvmfs/dune.opensciencegrid.org/spack/setup-env.sh
+ spack env activate dune-prototype
 ~~~
-{: ..language-bash}
+{: .language-bash}
 
 <!-- 
  #cat > tmpgen.fcl << EOF
@@ -670,8 +720,9 @@ There are bi-weekly LArSoft coordination meetings [https://indico.fnal.gov/categ
 A good old-fashioned `grep -r` or a find command can be effective if you are looking for an example of how to call something but I do not know where such an example might live. The copies of LArSoft source in CVMFS lack the CMakeLists.txt files and if that's what you're looking for to find examples, it's good to have a copy checked out. Here's a script that checks out all the LArSoft source and DUNE LArSoft code but does not compile it. Warning: it deletes a directory called "inspect" in your app area. Make sure `/exp/dune/app/users/<yourusername>` exists first:
 
 
-> ## Note
-> Remember the Apptainer!  You can use your dunesl7 alias defined at the top of this page.
+> ## SL7 container needed here
+> This checks out source with `mrb`, which does not work under Spack on AL9 yet. Use the
+> `dunesl7` alias from the [setup episode]({{ site.baseurl }}/setup).
 {: .callout}
 
 ~~~
