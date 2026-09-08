@@ -325,24 +325,29 @@ new TBrowser
 This will be faster with `VNC`. Navigate to the `Events TTree` in the file that is automatically opened, navigate to the `TBranch` with the Argon 39 MCTruths (it's near the bottom), click on the branch icon `simb::MCTruths_ar39__SinglesGen.obj`, and click on the `NParticles()` leaf (It's near the bottom. Yes, it has a red exclamation point on it, but go ahead and click on it). How many events are there? How many 39Ar decays are there per event on average?
 
 > ## A stale ~/.rootrc breaks the TBrowser icons
-> The `TBrowser` works under `dune-prototype` (verified 2026-09-07, ROOT 6.28/12). If
-> instead you see a burst of errors like
->
-> ~~~
-> Error in <TGVSplitter::TGVSplitter>: splitterv.xpm not found
-> Error in <TGComboBox::TGComboBox>: arrow_down.xpm not found
-> ~~~
-> {: .output}
->
-> and messages mentioning `$SRT_PRIVATE_CONTEXT` or `$SRT_PUBLIC_CONTEXT`, you have a
-> `~/.rootrc` left over from the SL7 and UPS days. It overrides `Gui.IconPath` with a
-> path that does not exist in the Spack ROOT layout. Move it aside and start `root`
-> again:
+> The `TBrowser` works under `dune-prototype` (verified 2026-09-07, ROOT 6.28/12). If it
+> opens with a burst of `*.xpm not found` errors instead, move an old `~/.rootrc` aside
+> and start `root` again:
 >
 > ~~~
 > mv ~/.rootrc ~/.rootrc.old
 > ~~~
 > {: .language-bash}
+>
+> > ## Why: an old ROOT config file
+> > A `~/.rootrc` left over from the SL7 and UPS days overrides `Gui.IconPath` with a
+> > path that does not exist in the Spack ROOT layout, so the GUI cannot find its button
+> > and scrollbar pixmaps. The giveaway is errors like
+> >
+> > ~~~
+> > Error in <TGVSplitter::TGVSplitter>: splitterv.xpm not found
+> > Error in <TGComboBox::TGComboBox>: arrow_down.xpm not found
+> > ~~~
+> > {: .output}
+> >
+> > together with messages mentioning `$SRT_PRIVATE_CONTEXT` or `$SRT_PUBLIC_CONTEXT`,
+> > variables from a build system retired years ago.
+> {: .solution}
 {: .callout}
 
 Header files for many data products are in [lardataobj](https://github.com/larsoft/lardataobj)   and some are in [nusimdata](https://github.com/NuSoftHEP/nusimdata).
