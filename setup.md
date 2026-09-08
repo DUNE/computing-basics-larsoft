@@ -74,10 +74,15 @@ For Spack and MPD documentation, configuration reference, and issue tracking, se
 [DUNE Spack project](https://dune.github.io/dune-spack-project/).
 
 > ## Instructor check: environment
-> Verified 2026-09-07 on `dunegpvm13`: spack instance **v1.2.2**, environment
-> **`dune-prototype`**. `setup-env.sh` selects the current instance automatically
-> (v1.0 and v1.1 are deprecated). Spack and MPD docs, config reference, and issues:
+> Verified 2026-09-07 on `dunegpvm13`: `$SPACK_ROOT` is **v1.2.2**, environment
+> **`dune-prototype`**. `setup-env.sh` selects the current instance automatically; do
+> not source v1.0 or v1.1 directly. Spack and MPD docs, config reference, and issues:
 > [https://dune.github.io/dune-spack-project/](https://dune.github.io/dune-spack-project/).
+>
+> `spack find --paths` shows `dunesw`, `root`, and `gcc` living under a
+> `.../spack/v1.1.1/opt/spack/...` tree, each marked `[^]`. That is expected: v1.2.2
+> uses v1.1.1 as an upstream and reuses its builds rather than rebuilding. The
+> environment is still served through v1.2.2.
 >
 > In a live session, confirm:
 >
@@ -193,14 +198,31 @@ setup dunesw $DUNELAR_VERSION -q $DUNELAR_QUALIFIER
 
 ## Step 4: Authentication for streaming and grid access
 
-DUNE has moved from grid proxies to tokens for data-access authentication.
+DUNE has moved from grid proxies to tokens for data-access authentication. Get a token
+once per session, before any command that streams a file over XRootD or submits to the
+grid:
 
-> ## Instructor TODO: confirm before teaching
-> Insert the current token command(s) from
-> [https://dune.github.io/computing-basics/Tokens/index.html](https://dune.github.io/computing-basics/Tokens/index.html),
-> for both the AL9 and SL7 variants, and confirm they still match what is published
-> there. The older `setup_fnal_security` grid-proxy command may still work as a fallback
-> inside the SL7 container but is no longer the primary path.
+~~~
+htgettoken -a htvaultprod.fnal.gov -i dune
+~~~
+{: .language-bash}
+
+This opens a browser page (or prints a URL to open) for a one-time authentication, then
+caches a token for the rest of the session. Check it with:
+
+~~~
+httokendecode
+~~~
+{: .language-bash}
+
+The same command works in the AL9/Spack environment and inside the SL7 container.
+
+> ## Instructor check: tokens
+> Verified 2026-09-07 on AL9: `htgettoken -a htvaultprod.fnal.gov -i dune` is the
+> current command, matching
+> [https://dune.github.io/computing-basics/Tokens/index.html](https://dune.github.io/computing-basics/Tokens/index.html).
+> The older `setup_fnal_security` grid-proxy path is not needed for this lesson; leave it
+> as an SL7-only fallback if a site still requires an X.509 proxy.
 {: .callout}
 
 ## Useful links

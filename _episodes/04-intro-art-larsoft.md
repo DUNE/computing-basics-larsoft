@@ -114,14 +114,15 @@ export SAMPLE_FILE=root://fndca1.fnal.gov:1094//pnfs/fnal.gov/usr/dune/persisten
 ~~~
 {: .language-bash}
 
-> ## Instructor TODO: confirm before teaching
-> Verify this file still exists near the session date with
+> ## Instructor check: sample file
+> Verified present 2026-09-07 with
 > `xrdfs fndca1.fnal.gov stat /pnfs/fnal.gov/usr/dune/persistent/users/schellma/tutorial_2025/NNBarAtm_hA_BR_dune10kt_1x2x6_54053565_607_20220331T192335Z_gen_g4_detsim_reco_65751406_0_20230125T150414Z_reReco.root`.
-> It sits in a user persistent area from an earlier tutorial and could be cleaned up.
-> Staging a fresh copy under this year's tutorial area is the safer option.
+> It sits in a user persistent area from an earlier tutorial. Re-check near the session
+> date; if it has been cleaned up, stage a fresh copy under this year's tutorial area.
 {: .callout}
 
-Get a token for streaming access, then check that the tools are on your path:
+Get a token for streaming access (`htgettoken -a htvaultprod.fnal.gov -i dune`, see the
+[setup episode]({{ site.baseurl }}/setup)), then check that the tools are on your path:
 
 ~~~
 which lar
@@ -336,11 +337,25 @@ new TBrowser
 
 This will be faster with `VNC`. Navigate to the `Events TTree` in the file that is automatically opened, navigate to the `TBranch` with the Argon 39 MCTruths (it's near the bottom), click on the branch icon `simb::MCTruths_ar39__SinglesGen.obj`, and click on the `NParticles()` leaf (It's near the bottom. Yes, it has a red exclamation point on it, but go ahead and click on it). How many events are there? How many 39Ar decays are there per event on average?
 
-> ## Instructor TODO: confirm before teaching
-> Click-test the `TBrowser` GUI under `dune-prototype`. The env does carry the X11/GL
-> stack (`libx11`, `libxft`, `libxpm`, `mesa`, `mesa-glu`, `glew`, `gl2ps`, `ftgl`), so
-> `root@6.28.12` should have GUI support, but confirm a window actually opens over both
-> a direct X connection and VNC. Fall back to SL7 for this part only if it fails.
+> ## A stale ~/.rootrc breaks the TBrowser icons
+> The `TBrowser` works under `dune-prototype` (verified 2026-09-07, ROOT 6.28/12). If
+> instead you see a burst of errors like
+>
+> ~~~
+> Error in <TGVSplitter::TGVSplitter>: splitterv.xpm not found
+> Error in <TGComboBox::TGComboBox>: arrow_down.xpm not found
+> ~~~
+> {: .output}
+>
+> and messages mentioning `$SRT_PRIVATE_CONTEXT` or `$SRT_PUBLIC_CONTEXT`, you have a
+> `~/.rootrc` left over from the SL7 and UPS days. It overrides `Gui.IconPath` with a
+> path that does not exist in the Spack ROOT layout. Move it aside and start `root`
+> again:
+>
+> ~~~
+> mv ~/.rootrc ~/.rootrc.old
+> ~~~
+> {: .language-bash}
 {: .callout}
 
 Header files for many data products are in [lardataobj](https://github.com/larsoft/lardataobj)   and some are in [nusimdata](https://github.com/NuSoftHEP/nusimdata).
@@ -551,8 +566,11 @@ Try it yourself! The workflow for ProtoDUNE-SP MC is given in the [Simulation Ta
 
 ### Running on a dunegpvm machine at Fermilab
 
-Warning: this takes time and has high peak memory use. The environment does not change
-that.
+Warning: this takes time and has high peak memory use, and the environment does not
+change that. On `dunegpvm13` (2026-09-07) the gen stage took about 90 seconds for one
+event and reco stage 1 took about 5 minutes for one event with a peak resident set
+size near 3.8 GB (WireCell signal processing, Pandora, and the Michel-ID module
+dominate). Run a single event unless you have a reason not to.
 
 Set up as in the [setup episode]({{ site.baseurl }}/setup). On AL9:
 
@@ -564,8 +582,7 @@ Set up as in the [setup episode]({{ site.baseurl }}/setup). On AL9:
  source /cvmfs/dune.opensciencegrid.org/spack/setup-env.sh
  spack env activate dune-prototype
 
- TMPDIR=/tmp 
- lar -n 1 -c mcc12_gen_protoDune_beam_cosmics_p1GeV.fcl -o gen.root
+ TMPDIR=/tmp lar -n 1 -c mcc12_gen_protoDune_beam_cosmics_p1GeV.fcl -o gen.root
  lar -n 1 -c protoDUNE_refactored_g4_stage1.fcl gen.root -o g4_stage1.root
  lar -n 1 -c protoDUNE_refactored_g4_stage2_sce_datadriven.fcl g4_stage1.root -o g4_stage2.root
  lar -n 1 -c protoDUNE_refactored_detsim_stage1.fcl g4_stage2.root -o detsim_stage1.root
@@ -577,17 +594,56 @@ Set up as in the [setup episode]({{ site.baseurl }}/setup). On AL9:
 ~~~
 {: .language-bash}
 
-Setting `TMPDIR=/tmp` on the same line defines that variable only for that one command.
-The generator stage needs it because the mcc12 gen `fcl` copies a 2.9 GB beam file to
-`/var/tmp` through ifdh's default temporary location, and the dunegpvm machines often do
-not have that much room in `/var/tmp`. The newer prod4 `fcl` files can stream the file
-with XRootD instead, but streaming is off by default in the prod4 `fcl` for the `dunesw`
-version used here, so setting `TMPDIR` is the smaller change. The Prod4 `fcl` files are
+> ## What each stage does
+> Each `lar` command reads the previous stage's art/ROOT file and writes the next one.
+> This is the ProtoDUNE-SP chain, so it produces a different detector's file from the
+> Far Detector `$SAMPLE_FILE` used earlier in the episode.
+>
+> - **gen** (`mcc12_gen_protoDune_beam_cosmics_p1GeV.fcl`): event generation. Builds the
+>   primary particles: a 1 GeV beam particle from the H4 beamline simulation, a CORSIKA
+>   cosmic-ray overlay, and radiological backgrounds (39Ar, 42Ar, 85Kr, 222Rn). Output
+>   is truth-level only (`simb::MCTruth`, `simb::MCParticle`), no detector response yet.
+> - **g4 stage 1** (`protoDUNE_refactored_g4_stage1.fcl`): Geant4 transport of those
+>   particles through the detector geometry, producing energy deposits in the liquid
+>   argon (`sim::SimEnergyDeposit`).
+> - **g4 stage 2** (`protoDUNE_refactored_g4_stage2_sce_datadriven.fcl`): drift of the
+>   ionization electrons to the anode with the data-driven space-charge map applied, and
+>   propagation of scintillation light to the photon detectors. Produces `sim::SimChannel`.
+> - **detsim stage 1** (`protoDUNE_refactored_detsim_stage1.fcl`): TPC electronics
+>   response. Converts `sim::SimChannel` into digitized ADC waveforms (`raw::RawDigit`)
+>   with noise and cold-electronics shaping.
+> - **detsim stage 2** (`protoDUNE_refactored_detsim_stage2.fcl`): the rest of the
+>   readout simulation (photon-detector electronics and trigger-primitive level).
+> - **reco stage 1** (`protoDUNE_refactored_reco_35ms_sce_datadriven_stage1.fcl`):
+>   signal processing (deconvolution to `recob::Wire`), hit finding (`recob::Hit`), and
+>   Pandora pattern recognition (`recob::PFParticle`, `recob::Track`, `recob::Shower`,
+>   `recob::SpacePoint`) with calorimetry. "35ms" is the assumed electron lifetime. This
+>   is the file the dump and event-display commands below use.
+>
+> There is no CAF step in this chain. CAFs, the flat Common Analysis Format ntuples, come
+> from a separate CAFMaker job run on a reconstructed Far Detector file such as
+> `$SAMPLE_FILE`; ProtoDUNE analyses instead use `pduneana` analyzer trees.
+>
+> Instructor note: the descriptions above are a summary. Check the data products each
+> stage actually writes with `product_sizes_dumper -f 0` on its output file, and correct
+> this list against the current `dunesw` if the refactored chain has changed.
+{: .callout}
+
+Prefixing `TMPDIR=/tmp` on the same line defines that variable only for that one command.
+The generator stage copies a 2.9 GB beam file, plus several CORSIKA cosmic-ray
+databases, through ifdh's temporary area, which defaults to `/var/tmp`. Some dunegpvm
+machines are short on free space in `/var/tmp`, so pointing `TMPDIR` at `/tmp` heads off
+a mid-job copy failure. The prod4 `fcl` files can stream the beam file with XRootD
+instead, but streaming is off by default in the prod4 `fcl` for the `dunesw` version
+used here, so setting `TMPDIR` is the smaller change. The prod4 `fcl` files are
 [here](https://wiki.dunescience.org/wiki/ProtoDUNE-SP_Production_IV).
 
-> ## Instructor TODO: confirm before teaching
-> Check whether the `TMPDIR=/tmp` workaround is still needed under Spack. The ifdh
-> version and its default temporary location may differ from the UPS build.
+> ## Instructor check: ifdh and TMPDIR
+> Verified 2026-09-07 on `dunegpvm13` under `dune-prototype` (`ifdhc@2.8.0`): the
+> generator stage runs to completion (exit status 0, about 90 seconds) both with and
+> without `TMPDIR=/tmp`. ifdh stages into `/var/tmp/ifdh_*` by default and into
+> `/tmp/ifdh_*` with the override. Free space in `/var/tmp` varies by machine, so keep
+> the `TMPDIR=/tmp` line as a safeguard rather than dropping it.
 {: .callout}
 
 ### Run the event display on your new Monte Carlo event
@@ -597,20 +653,35 @@ version used here, so setting `TMPDIR` is the smaller change. The Prod4 `fcl` fi
 {: .language-bash}
 and push the "Reconstructed" radio button at the bottom of the display.
 
-> ## Instructor TODO: confirm before teaching
-> Test `evd_protoDUNE_data.fcl` under `dune-prototype` specifically. `lareventdisplay`
-> is in the env and ROOT has the GUI stack, so this should work, but the event display
-> is the GUI-heaviest thing in the episode and worth a real run before teaching. Fall
-> back to the SL7 container for the event-display exercises only if it fails.
+> ## The event display currently needs the SL7 container
+> Tried 2026-09-07 on `dunegpvm13` under `dune-prototype` with a clean `~/.rootrc`.
+> `evd_protoDUNE_data.fcl` reads the file, then fails during `beginJob` with a fatal
+> ROOT error before any window opens:
+>
+> ~~~
+> Fatal Root Error: TGPictureButton::TGPictureButton
+> pixmap not found or the file format is not supported for button -1
+> ROOT severity: 3000
+> Art has completed and will exit with status 1
+> ~~~
+> {: .output}
+>
+> The event display toolbar loads button pixmaps that are not on the Spack ROOT icon
+> path, and it treats a missing one as fatal (unlike the `TBrowser`, which only warns).
+> Until this is fixed in the Spack build, run the event-display exercises in the SL7
+> container. Issue to track: [DUNE Spack project](https://dune.github.io/dune-spack-project/).
 {: .callout}
 
 ### Display decoded raw digits
+
+This also uses the event display, so the same SL7 requirement applies for now (see the
+callout above).
 
 To look at some raw digits in the event display, you need to decode a DAQ file or find one that's already been decoded.  The decoder fcl for ProtoDUNE-HD data taken in 2024 is run_pdhd_wibeth3_tpc_decoder.fcl.  An event display of an example decoded file is
 ~~~
  lar -c evd_protoDUNE_data.fcl /exp/dune/data/users/trj/nov2024tutorial/np04hd_raw_run028707_0075_dataflow5_datawriter_0_20240815T154544_decode.root
 ~~~
-{: ..language-bash}
+{: .language-bash}
 
 which is a file taken in August 2024.
 
@@ -689,7 +760,8 @@ Now you can run a sequence of lar steps to generate and reconstruct a file.
 
 You can also browse the root files with a TBrowser or run other dumper fcl files on them. The dump example commands above redirect their outputs to text files which you can edit with a text editor or run grep on to look for things.
 
-You can run the event display with
+You can run the event display with the command below, from the SL7 container for now
+(see the event-display callout earlier in this episode).
 
 ~~~ 
 lar -c evd_protoDUNE.fcl reco_stage1.root
