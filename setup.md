@@ -233,6 +233,21 @@ The same command works in the AL9/Spack environment and inside the SL7 container
 > as an SL7-only fallback if a site still requires an X.509 proxy.
 {: .callout}
 
+## Common failure modes
+
+These were all seen while checking this lesson on `dunegpvm13` (2026-09-07). The error
+text is what you actually see; the cause and fix are what to do about it.
+
+| Symptom | Cause | Fix |
+|---------|-------|-----|
+| Inside the SL7 container: `Fatal in <TROOT::InitInterpreter>: cannot load library /lib64/libc.so.6: version GLIBC_2.33 not found`, naming a `.../spack/environments/...` library | The Spack environment was active in the shell you started the container from, and Apptainer copied its `LD_LIBRARY_PATH` in. `setup dunesw` fixes `PATH` but not `LD_LIBRARY_PATH`. | Exit, start the container from a fresh login shell where you have not sourced any `spack` setup. |
+| In a `TBrowser` or other ROOT GUI: `splitterv.xpm not found`, `arrow_down.xpm not found`, plus messages mentioning `$SRT_PRIVATE_CONTEXT` or `$SRT_PUBLIC_CONTEXT` | A `~/.rootrc` left over from the SL7 and UPS days is overriding `Gui.IconPath` with a path that does not exist in the Spack ROOT layout. | `mv ~/.rootrc ~/.rootrc.old` and start `root` again. |
+| Event display under Spack: `Fatal Root Error: TGPictureButton::TGPictureButton pixmap not found`, job exits with status 1 and no window | The event display toolbar loads button pixmaps that are not on the Spack ROOT icon path, and it treats a missing one as fatal. | Run the event-display exercises in the SL7 container for now. Works there from a clean shell. |
+| `spack env activate dune-prototype` works, but `spack find --paths` shows packages under a `.../spack/v1.1.1/...` tree while `$SPACK_ROOT` is `v1.2.2` | v1.2.2 uses v1.1.1 as an upstream and reuses its builds instead of rebuilding. | Expected. Not an error. |
+| mrb configure: `Could not find a package configuration file provided by "dunereco"` (or another stack package) | Two packages from different release trains are checked out in one development area, for example `protoduneana` (dunesw `vXX_YY_ZZdNN`) and `larexamples` (larsoft `vXX_YY_ZZ`). | One release train per development area. Start a fresh `mrb newDev`. |
+| mrb configure cannot find stack headers even with a single package checked out | `setup_dune.sh` was sourced but `setup dunesw` was not, so the stack is not on `CMAKE_PREFIX_PATH`. | `setup dunesw v10_22_00d01 -q e26:prof` before `mrb g`. |
+| fcl parse error: `Can't find file "services_microboone_simulation.fcl"` | A stock `larexamples` job fcl assumes `uboonecode` is set up. | Use a DUNE services fcl, or build and inspect the module without running its example job. |
+
 ## Useful links
 
 - [DUNE FAQ][dunefaq]
