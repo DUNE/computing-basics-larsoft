@@ -14,25 +14,6 @@ keypoints:
 - Running these tools on existing files works under AL9 and the dune-prototype Spack environment; building or modifying them still needs the SL7 container.
 ---
 
-<!--
-#### Live Notes
-
-Participants are encouraged to monitor and utilize the [Livedoc for May. 2023](https://docs.google.com/document/d/19XMQqQ0YV2AtR5OdJJkXoDkuRLWv30BnHY9C5N92uYs/edit?usp=sharing) to ask questions and learn.  For reference, the [Livedoc from Jan. 2023](https://docs.google.com/document/d/1sgRQPQn1OCMEUHAk28bTPhZoySdT5NUSDnW07aL-iQU/edit?usp=sharing) is provided.
--->
-
-<!--
-#### Temporary Instructor Note: 
-
-The May 2023 version of the DUNE Software and Computing training was imported from the May 2022 version because it was a two day event, similar to this one, see [04-intro-art-larsoft.md (May 2022)](https://github.com/DUNE/computing-training-basics/blob/gh-pages/_episodes/04-intro-art-larsoft.md) for reference.
-
-This lesson (06-intro-art-larsoft.md) was imported from the [Jan. 2023 lesson](https://github.com/DUNE/computing-training-basics-short/blob/gh-pages/_episodes/04-intro-art-larsoft.md) which was a one half day version of the training.
-
-This lesson includes collapsable quiz blocks which are encouraged, a blank quiz question block included at the end of the page. -->
-
-<!-- The official timetable for this training event is on the [Indico site](https://indico.fnal.gov/event/59762/timetable/#20230524).
-
--->
-
 ## Introduction to *art*
 
 *Art* is the framework used for the offline software used to process LArTPC data from the far detector and the ProtoDUNEs. It was chosen not only because of the features it provides, but also because it allows DUNE to use and share algorithms developed for other LArTPC experiments, such as ArgoNeuT, LArIAT, MicroBooNE and ICARUS. The section below describes LArSoft, a shared software toolkit. Art is also used by the NOvA and mu2e experiments. The primary language for *art* and experiment-specific plug-ins is C++.
