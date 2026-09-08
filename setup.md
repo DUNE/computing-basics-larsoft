@@ -41,8 +41,16 @@ described, check `#computing-training-basics` on DUNE Slack; the Spack environme
 have moved on since this page was last checked.
 
 > ## Do not mix environments
-> Source either the AL9/Spack setup or the SL7 container in a shell, not both. Start a
-> fresh shell when you switch.
+> Source either the AL9/Spack setup or the SL7 container in a shell, not both, and start
+> a fresh login shell when you switch.
+>
+> This matters most in one direction: Apptainer passes the parent shell's environment
+> into the container, so if the Spack environment is active when you start the SL7
+> container, its `LD_LIBRARY_PATH` leaks in and the container's `root` and `lar` try to
+> load the AL9 ROOT libraries. You get
+> `Fatal in <TROOT::InitInterpreter>: cannot load library /lib64/libc.so.6: version GLIBC_2.33 not found`.
+> `setup dunesw` fixes `PATH` but not `LD_LIBRARY_PATH`, so the fix is to enter the
+> container from a shell where you have not run any `spack` setup.
 {: .callout}
 
 Before the tutorial, follow the setup for the

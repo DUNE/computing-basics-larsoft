@@ -153,7 +153,13 @@ You need this only if a command in this episode fails under Spack, or if you are
 continuing to Episodes 05.5 and 06. `mrb` and UPS-based development do not yet work
 under Spack on AL9.
 
-Start the SL7 container with the alias for your machine (defined in the
+Start the SL7 container from a shell where the Spack environment is **not** active. A
+fresh login shell is the safe choice. Apptainer copies the parent shell's environment
+into the container, so a leftover `LD_LIBRARY_PATH` from `spack env activate` makes the
+container's `root` and `lar` load the AL9 ROOT libraries and fail with
+`GLIBC_2.33 not found`. `setup dunesw` does not undo that.
+
+Use the alias for your machine (defined in the
 [setup episode]({{ site.baseurl }}/setup)): `dunesl7` on a gpvm, `dunesl7build` on a
 build node, `dunesl7CERN` at CERN. Starting a container gives you a very bare
 environment. It does not source your `.profile`, so do that yourself. I always set the
