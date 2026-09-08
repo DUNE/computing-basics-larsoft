@@ -1,58 +1,215 @@
 ---
-title: Mission Setup for Larsoft Basics
+title: "Mission Setup for LArSoft Basics"
 teaching: 60
 exercises: 20
 questions:
-- How do I prepare for DUNE computing tutorials?
-objectives:  
-- Get ready to do the tutorial
-- Understand the authentication process
-- Set up your computing environment for DUNE
-- Set up grid access and job submission
+- How do I prepare for the LArSoft Basics tutorial?
+- Which environment do I use, AL9 or the SL7 container?
+objectives:
+- Get an environment ready for DUNE, AL9 and Spack by default
+- Understand the authentication procedure
+- Know when to use the SL7 container instead
+- Run a short exercise to check the setup
 keypoints:
-- Kerberos is FNAL’s method for ensuring strong authentication to its computing resources
-- Computing resources at FNAL are accessed using the Secure SHell protocol
-- Specific computer nodes are accessed by DUNE users
-- Access is streamlined using configuration files
-- CERN users configure and access CERN resources instead
+- DUNE is moving from SL7 (Apptainer, UPS) to native AL9 (Spack)
+- Running dunesw tools on existing files works under the dune-prototype Spack environment on AL9
+- Building or modifying code with mrb still needs the SL7 container
+- Do not source both environments in one shell
+- Kerberos authenticates you to FNAL machines; tokens authenticate data access
 ---
+
 ## Objectives
 
-- Get ready to do the tutorial
-- Understand the authentication procedures
-- Set up your environment for DUNE
-- Do an exercise to help us check if all is good
-- Get streaming and grid access
+- Get an environment ready for DUNE, AL9 and Spack by default
+- Understand the authentication procedure
+- Know when, and why, to use the SL7 container instead
+- Run a short exercise to check that the setup works
 
-Before the tutorial: please follow the setup procedures for the [Computing Basics tutorial](https://dune.github.io/computing-basics/setup) and review the materials on [storage](https://hschellman.github.io/computing-basics/02-storage-spaces/index.html) and [data management](https://hschellman.github.io/computing-basics/03-data-management/index.html) before starting this tutorial. 
+## Two environments
 
-### Useful Links
-   
-The [DUNE FAQ][DUNE FAQ] on GitHub.
+DUNE is part way through moving from SL7 (run through Apptainer, using UPS) to native
+AL9 (using Spack). At the time of writing:
 
-[Wiki page][dune-wiki-interactive-resources] on DUNE's interactive computing resources, including tips on using Kerberos and VNC.
+- Running LArSoft and `dunesw` tools (`lar`, `config_dumper`, the event display, and so
+  on) on existing files works under the `dune-prototype` Spack environment on AL9.
+- Building or modifying LArSoft or DUNE code with `mrb` does not yet work under Spack on
+  AL9. Episodes 05.5 and 06 check out and edit source code, so they still use the SL7
+  container.
 
-{%include links.md%} 
+This part of the migration moves quickly. If a command below does not behave as
+described, check `#computing-training-basics` on DUNE Slack; the Spack environment may
+have moved on since this page was last checked.
 
-[SL7_to_Alma9]: https://wiki.dunescience.org/wiki/SL7_to_Alma9_conversion#SL7_to_Alma_9_conversion
+> ## Do not mix environments
+> Source either the AL9/Spack setup or the SL7 container in a shell, not both. Start a
+> fresh shell when you switch.
+{: .callout}
 
-[Spack documentation]: https://fifewiki.fnal.gov/wiki/Spack
-[indico-event-page]: https://indico.fnal.gov/event/59762/
-[indico-event-requirements]: https://indico.fnal.gov/event/59762/page/3229-requirements
-[dune-collaboration]: http://collaboration.dunescience.org/
-[computing-account-request-form]: https://fermi.servicenowservices.com/com.glideapp.servicecatalog_cat_item_view.do?v=1&sysparm_id=d361073881218500bea3634b5c987c4c&sysparm_link_parent=a5a8218af15014008638c2db58a72314&sysparm_catalog=e0d08b13c3330100c8b837659bba8fb4&sysparm_catalog_view=catalog_Service_Catalog 
-[get-connected-user-access]: https://get-connected.fnal.gov/users/access/ 
-[kerberos-password]: https://fermi.servicenowservices.com/kb_view.do?sysparm_article=KB0011294 
-[kerberos-template]: https://authentication.fnal.gov/krb5conf/ 
-[kerberos-config]: https://fermi.servicenowservices.com/kb_view.do?sysparm_article=KB0011315 
-[dunegpvm-status]: https://fifemon.fnal.gov/monitor/d/000000004/experiment-overview?orgId=1&var-experiment=dune&from=now-6h&to=now-5m&panelId=30&fullscreen
-[dunegpvm-vnc]: https://wiki.dunescience.org/wiki/DUNE_Computing/Using_VNC_Connections_on_the_dunegpvms
-[proxy-info]: https://cdcvs.fnal.gov/redmine/projects/sbndcode/wiki/Get_a_certificate_proxy 
-[dune-setup-jan2021]: https://wiki.dunescience.org/wiki/DUNE_Computing/Setup_Jan2021
-[dune-training-may2021]: https://dune.github.io/computing-training-202105/
+Before the tutorial, follow the setup for the
+[Computing Basics tutorial](https://dune.github.io/computing-basics/setup.html) and read
+its storage and data management material.
+
+## Step 1: Accounts
+
+You need to be a DUNE collaborator with a valid FNAL or CERN computing account. See
+[DUNE Basic Setup](https://dune.github.io/computing-basics/setup.html) if you do not have
+one yet.
+
+## Step 2: AL9 / Spack setup (default)
+
+Log in to a `dunegpvmXX.fnal.gov` machine, which runs Alma Linux 9 with no container
+needed, or to `lxplus.cern.ch`. Start from a clean shell with no other experiment's
+setup sourced.
+
+~~~
+source /cvmfs/dune.opensciencegrid.org/spack/setup-env.sh
+spack env activate dune-prototype
+~~~
+{: .language-bash}
+
+Activating the environment is enough to put `lar`, `root`, and the rest of `dunesw` on
+your path. You do not need a separate `spack load`.
+
+For Spack and MPD documentation, configuration reference, and issue tracking, see the
+[DUNE Spack project](https://dune.github.io/dune-spack-project/).
+
+> ## Instructor check: environment
+> Verified 2026-09-07 on `dunegpvm13`: spack instance **v1.2.2**, environment
+> **`dune-prototype`**. `setup-env.sh` selects the current instance automatically
+> (v1.0 and v1.1 are deprecated). Spack and MPD docs, config reference, and issues:
+> [https://dune.github.io/dune-spack-project/](https://dune.github.io/dune-spack-project/).
+>
+> In a live session, confirm:
+>
+> - `spack env list` includes `dune-prototype`
+> - `which lar` resolves under `.../environments/dune-prototype/.spack-env/view/bin/`
+> - `spack find dunesw` shows one installed `dunesw@...`
+>
+> > ## What you should see
+> > ~~~
+> > $ which lar && root --version
+> > /cvmfs/dune.opensciencegrid.org/spack/environments/dune-prototype/.spack-env/view/bin/lar
+> > ROOT Version: 6.28/12
+> >
+> > $ spack find dunesw
+> > -- linux-almalinux9-x86_64_v3 / %c,cxx=gcc@12.5.0 ---------------
+> > dunesw@10.22.00d01
+> > ==> 1 installed package
+> > ~~~
+> > {: .output}
+> {: .solution}
+{: .callout}
+
+Set up disk-area variables:
+
+~~~
+export DUNEDATA=/exp/dune/data/users/$USER
+export DUNEAPP=/exp/dune/app/users/$USER
+export PERSISTENT=/pnfs/dune/persistent/users/$USER
+export SCRATCH=/pnfs/dune/scratch/users/$USER
+
+mkdir -p $DUNEAPP $DUNEDATA $SCRATCH $PERSISTENT
+~~~
+{: .language-bash}
+
+Check that the tools are on your path:
+
+~~~
+which root
+root --version
+which lar
+lar --help
+~~~
+{: .language-bash}
+
+> ## Exercise: AL9 sanity check
+> 1. Confirm `root --version` prints a version rather than "command not found".
+> 2. Confirm `which lar` resolves to a path under the Spack tree.
+> 3. Run `date >& $DUNEAPP/my_first_login.txt` and check the file.
+> 4. If `lar --help` fails, `dune-prototype` does not have `dunesw` set up in your
+>    session. Stop here and flag it rather than continuing into Episode 04.
+{: .challenge}
+
+## Step 3: SL7 container (only to build or modify code)
+
+Skip this step if you are only running existing tools on existing files.
+
+Episodes 05.5 (mrb) and 06 (modify a module) need the SL7 container, because `mrb` and
+UPS-based development do not yet work under Spack on AL9.
+
+> ## Start an SL7 Apptainer
+> > ## gpvm
+> > ~~~
+> > {% include apptainer_gpvm.md %}
+> > ~~~
+> > {: .language-bash}
+> {: .solution}
+> > ## build machine
+> > `/pnfs` is not mounted on the build machines.
+> > ~~~
+> > {% include apptainer_build.md %}
+> > ~~~
+> > {: .language-bash}
+> {: .solution}
+> > ## CERN
+> > ~~~
+> > {% include apptainer_cern.md %}
+> > ~~~
+> > {: .language-bash}
+> {: .solution}
+{: .challenge}
+
+These are long commands. It helps to define aliases in a login script:
+
+~~~
+alias dunesl7="/cvmfs/oasis.opensciencegrid.org/mis/apptainer/current/bin/apptainer shell --shell=/bin/bash -B /cvmfs,/exp,/nashome,/pnfs/dune,/opt,/run/user,/etc/hostname,/etc/hosts,/etc/krb5.conf --ipc --pid /cvmfs/singularity.opensciencegrid.org/fermilab/fnal-dev-sl7:latest"
+
+alias dunesl7build="/cvmfs/oasis.opensciencegrid.org/mis/apptainer/current/bin/apptainer shell --shell=/bin/bash -B /cvmfs,/exp,/build,/nashome,/opt,/run/user,/etc/hostname,/etc/hosts,/etc/krb5.conf --ipc --pid /cvmfs/singularity.opensciencegrid.org/fermilab/fnal-dev-sl7:latest"
+
+alias dunesl7CERN="/cvmfs/oasis.opensciencegrid.org/mis/apptainer/current/bin/apptainer shell --shell=/bin/bash -B /cvmfs,/afs,/opt,/run/user,/etc/hostname --ipc --pid /cvmfs/singularity.opensciencegrid.org/fermilab/fnal-dev-sl7:latest"
+
+alias dunesetups="source /cvmfs/dune.opensciencegrid.org/products/dune/setup_dune.sh"
+~~~
+{: .language-bash}
+
+A container starts with a bare environment and does not source your `.profile`, so do
+that yourself. Then set up `dunesw`:
+
+~~~
+dunesetups
+
+export DUNELAR_VERSION=v10_22_00d01
+export DUNELAR_QUALIFIER=e26:prof
+setup dunesw $DUNELAR_VERSION -q $DUNELAR_QUALIFIER
+~~~
+{: .language-bash}
+
+> ## Instructor check: dunesw version
+> `dune-prototype` on AL9 carries `dunesw@10.22.00d01` (verified 2026-09-07), so
+> `v10_22_00d01` is correct here. Inside the SL7 container, confirm the UPS tag and
+> qualifier with `ups list -aK+ dunesw` near the session date, and update every
+> `DUNELAR_VERSION` in this lesson (including Episode 06) if it has moved.
+{: .callout}
+
+## Step 4: Authentication for streaming and grid access
+
+DUNE has moved from grid proxies to tokens for data-access authentication.
+
+> ## Instructor TODO: confirm before teaching
+> Insert the current token command(s) from
+> [https://dune.github.io/computing-basics/Tokens/index.html](https://dune.github.io/computing-basics/Tokens/index.html),
+> for both the AL9 and SL7 variants, and confirm they still match what is published
+> there. The older `setup_fnal_security` grid-proxy command may still work as a fallback
+> inside the SL7 container but is no longer the primary path.
+{: .callout}
+
+## Useful links
+
+- [DUNE FAQ][dunefaq]
+- [DUNE Interactive Computing Resources wiki][dune-wiki-interactive-resources]
+- [Tokens setup](https://dune.github.io/computing-basics/Tokens/index.html)
+
+{%include links.md%}
+
+[dunefaq]: https://github.com/orgs/DUNE/projects/19/views/1
 [dune-wiki-interactive-resources]: https://wiki.dunescience.org/wiki/DUNE_Computing/DUNE_Interactive_Computing_Resources
-[anaconda-faq-kinit]: https://github.com/DUNE/FAQ/issues/22
-[dunefaq]: https://github.com/DUNE/FAQ
-[DUNE FAQ]: https://github.com/orgs/DUNE/projects/19/views/1
-
-
