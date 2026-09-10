@@ -120,3 +120,8 @@ exclude:
 
 # Turn on built-in syntax highlighting.
 highlighter: rouge
+
+# Extra plugins (must be on the GitHub Pages whitelist).
+# jekyll-redirect-from lets an episode declare `redirect_to:` in its front matter.
+plugins:
+  - jekyll-redirect-from

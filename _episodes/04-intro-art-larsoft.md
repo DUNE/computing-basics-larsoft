@@ -538,8 +538,6 @@ There are a number of data product dumper fcl files. A non-exhaustive list of us
 ~~~
 {: .language-bash}
 
-Some of these may require some configuration of input module labels so they can find the data products of interest.
-
 Some of these may require some configuration of input module labels so they can find the data products of interest. Try one of these yourself:
 
 ~~~ 
@@ -679,16 +677,31 @@ which is a file taken in August 2024.
 
 ### Running on HDF5 raw data
 
-One has to load (on the same line) a special library to stream HDF5 formatted data from vd-protodune and hd-protodune.
-
-`LD_PRELOAD=$XROOTD_LIB/libXrdPosixPreload.so` has to be on the same line as your `lar`
-command:
+One has to load (on the same line) a special library to stream HDF5 formatted data
+from vd-protodune and hd-protodune. `LD_PRELOAD=$XROOTD_LIB/libXrdPosixPreload.so` has
+to be on the same line as your `lar` command:
 
 ~~~
 export DATA=root://ccxrootdegee.in2p3.fr:1094/pnfs/in2p3.fr/data/dune/disk/hd-protodune/d1/a6/np04hd_raw_run029147_0032_dataflow4_datawriter_0_20240912T110618.hdf5
 LD_PRELOAD=$XROOTD_LIB/libXrdPosixPreload.so lar -c standard_reco_protodunehd_keepup.fcl $DATA -n 1
 ~~~
 {: .language-bash}
+
+> ## HDF5 raw-data reading: not working yet, fix coming soon
+> As of September 2026 the recipe above does not run on either path, so the tutorial
+> does not exercise it. It is kept here as a record of how it is meant to work.
+>
+> * **AL9 / `dune-prototype` Spack:** `$XROOTD_LIB` is not set in the Spack
+>   environment, so `LD_PRELOAD` expands to `/libXrdPosixPreload.so` and the loader
+>   rejects it (`ld.so: object '/libXrdPosixPreload.so' from LD_PRELOAD cannot be
+>   preloaded`).
+> * **SL7 container:** the preload line is fine, but opening the CC-IN2P3 URL above
+>   fails with `HDF5RawDataFile ... File open failure ... (File accessibility) Unable
+>   to open file`.
+>
+> A working AL9 recipe (the real `libXrdPosixPreload.so` path plus a reachable input
+> file) will be added here once it is sorted out.
+{: .callout}
 
 ### Running at CERN
 
@@ -792,11 +805,14 @@ A good old-fashioned `grep -r` or a find command can be effective if you are loo
 ~~~
  #!/bin/bash
  USERNAME=`whoami`
+ export DUNELAR_VERSION=v10_22_00d01
+ export DUNELAR_QUALIFIER=e26:prof
  source /cvmfs/dune.opensciencegrid.org/products/dune/setup_dune.sh
  cd /exp/dune/app/users/${USERNAME}
  rm -rf inspect
  mkdir inspect
  cd inspect
+ setup dunesw ${DUNELAR_VERSION} -q ${DUNELAR_QUALIFIER}
  mrb newDev
  source /exp/dune/app/users/${USERNAME}/inspect/localProducts*/setup
  cd srcs

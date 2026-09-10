@@ -1,5 +1,5 @@
 ---
-title: Expert in the Room - LArSoft How to modify a module - in progress
+title: Expert in the Room - LArSoft How to modify a module
 teaching: 15
 exercises: 0
 questions:
@@ -14,7 +14,7 @@ objectives:
 - Modify the example module to make a custom histogram.
 - Test the modified module.
 - Stretch goal -- run the debugger.
-key points:
+keypoints:
 - DUNE's software stack is built out of a tree of UPS products.
 - You don't have to build all of the software to make modifications -- you can check out and build one or more products to achieve your goals.
 - You can set up pre-built CVMFS versions of products you aren't developing, and UPS will check version consistency, though it is up to you to request the right versions.
@@ -554,9 +554,9 @@ are good examples of places to look for code, for example.
 
 For protoduneana and dunesw, this [wiki page][dunetpc-wiki-tutorial] is quite good.  LArSoft uses GitHub with a pull-request model.  See 
 
-[https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/Developing_With_LArSoft][redmine-dev-larsoft]
+[Developing With LArSoft][redmine-dev-larsoft]
 
-[https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/Working_with_GitHub][redmine-working-github]
+[Working with GitHub][redmine-working-github]
 
 ### Some handy tools for working with search paths
 
@@ -707,8 +707,8 @@ will use your valid Kerberos ticket to generate the necessary certificates and p
 [dune-wiki-protodune-sp]: https://wiki.dunescience.org/wiki/Look_at_ProtoDUNE_SP_data
 [redmine-327]:  https://cdcvs.fnal.gov/redmine/documents/327
 [dunetpc-wiki-tutorial]:  https://cdcvs.fnal.gov/redmine/projects/dunetpc/wiki/_Tutorial_
-[redmine-dev-larsoft]: https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/Developing_With_LArSoft
-[redmine-working-github]: https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/Working_with_GitHub
+[redmine-dev-larsoft]: https://larsoft.github.io/LArSoftWiki/Developing_With_LArSoft
+[redmine-working-github]: https://larsoft.github.io/LArSoftWiki/Working_with_GitHub
 [dune-larsoft-may21]: https://wiki.dunescience.org/wiki/Presentation_of_LArSoft_May_2021
 [dunesw-dependency-tree]: https://wiki.dunescience.org/w/img_auth.php/6/6f/Dunesw_v09_72_01_e20_prof_graph.pdf
 
